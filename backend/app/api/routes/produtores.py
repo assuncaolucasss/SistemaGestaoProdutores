@@ -14,18 +14,12 @@ router = APIRouter(prefix="/produtores", tags=["Produtores"])
 
 
 def _normalizar(texto: str) -> str:
-    """Remove acentos e converte para maiúsculas — usado no TERMO de busca."""
     return unicodedata.normalize("NFD", texto).encode("ascii", "ignore").decode("utf-8").upper()
 
 
 def _aplicar_filtros(query, busca: Optional[str], assentamento: Optional[str]):
     query = query.where(Produtor.ativo == True)
     if busca:
-        # Busca simples com UPPER no banco e termo normalizado sem acento.
-        # func.upper() funciona no SQLite. A remoção de acento do banco
-        # só é possível no PostgreSQL (unaccent extension) — nos testes
-        # (SQLite) os dados de seed já são inseridos em maiúsculas, então
-        # upper() é suficiente para os testes passarem.
         termo = f"%{busca.upper()}%"
         termo_normalizado = f"%{_normalizar(busca)}%"
         query = query.where(
@@ -37,7 +31,9 @@ def _aplicar_filtros(query, busca: Optional[str], assentamento: Optional[str]):
             | func.upper(Produtor.codigo_beneficiario).like(termo)
         )
     if assentamento:
-        query = query.where(Produtor.assentamento == assentamento)
+        query = query.where(
+            func.upper(Produtor.assentamento) == assentamento.upper()
+        )
     return query
 
 
