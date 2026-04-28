@@ -18,13 +18,13 @@
           class="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
       </div>
       <select v-model="assentamentoFiltro" @change="onFiltro"
-        class="py-2.5 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent uppercase">
-        <option value="">Todos os assentamentos</option>
-        <option>PA BRASÍLIA</option>
-        <option>PA MARIA DE LOURDES RODRIGUES</option>
-        <option>PA MONTEPÍO</option>
-        <option>PA UNIÃO AMEIRCO SANTANA</option>
-      </select>
+  class="py-2.5 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent uppercase">
+  <option value="">Todos os assentamentos</option>
+  <option value="PA BRASÍLIA">PA BRASÍLIA</option>
+  <option value="PA MARIA DE LOURDES RODRIGUES">PA MARIA DE LOURDES RODRIGUES</option>
+  <option value="PA MONTEPÍO">PA MONTEPÍO</option>
+  <option value="PA UNIÃO AMEIRCO SANTANA">PA UNIÃO AMERICO SANTANA</option>
+</select>
     </div>
 
     <!-- Loading -->
