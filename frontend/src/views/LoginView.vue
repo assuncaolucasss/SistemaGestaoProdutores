@@ -9,7 +9,7 @@
             <Sprout class="w-8 h-8 text-primary-600" />
           </div>
         </div>
-        <h2 class="text-xl font-bold text-primary-600">Sistema de Gestão de Assentamentos</h2>
+        <h2 class="text-xl font-bold text-primary-600">Sistema de Gestão de Produtores</h2>
         <p class="text-gray-500 text-sm mt-1">
           Secretaria de Agricultura<br>Canaã dos Carajás
         </p>
