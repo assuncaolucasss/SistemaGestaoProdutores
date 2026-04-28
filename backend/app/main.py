@@ -42,7 +42,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.on_event("startup")
 def on_startup():
-    create_db_and_tables()
+    try:
+        create_db_and_tables()
+        print("✅ Banco conectado com sucesso")
+    except Exception as e:
+        import traceback
+        print("❌ ERRO NO STARTUP:")
+        traceback.print_exc()
+        raise e
 
 
 app.include_router(auth_router)
