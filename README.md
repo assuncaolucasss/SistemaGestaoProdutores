@@ -298,5 +298,4 @@ Para suporte, entre em contato com a equipe de desenvolvimento ou abra uma issue
 - Funcionalidades básicas de gestão de produtores e fomentos
 - Sistema de autenticação
 - Formulários dinâmicos
-- Geração de PDFs</content>
-<parameter name="filePath">c:\Users\braga\OneDrive\Documentos\DevProjetos\SistemaDeGestaoDeProdutores\README.md
+- Geração de PDFs
