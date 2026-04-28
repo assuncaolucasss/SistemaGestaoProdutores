@@ -1,4 +1,4 @@
-# Sistema de Gestão de Produtores - Fomentos Agrícolas Canaã dos Carajás
+# Sistema de Gestão de Produtores
 
 ## Descrição
 
@@ -85,8 +85,8 @@ O projeto é dividido em duas partes principais:
 ### 1. Clonagem do Repositório
 
 ```bash
-git clone https://github.com/assuncaolucasss/sistema-gestao-produtores.git
-cd sistema-gestao-produtores
+git clone https://github.com/assuncaolucasss/SistemaGestaoProdutores.git
+cd SistemaGestaoProdutores
 ```
 
 ### 2. Configuração do Backend
