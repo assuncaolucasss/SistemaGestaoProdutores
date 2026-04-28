@@ -19,7 +19,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
     "https://sistemagestaoprodutores.onrender.com",
-    "https://seu-frontend.vercel.app",
+    "https://sistema-gestao-produtores.vercel.app/",
 ],
     allow_credentials=True,
     allow_methods=["*"],
