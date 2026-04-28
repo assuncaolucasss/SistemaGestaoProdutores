@@ -17,7 +17,10 @@ app = FastAPI(title="Fomentos Agrícolas - Canaã dos Carajás")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://sistemagestaoprodutores.onrender.com", "sistema-gestao-produtores-ofo9sip7p.vercel.app"],
+    allow_origins=[
+    "https://sistemagestaoprodutores.onrender.com",
+    "https://seu-frontend.vercel.app",
+],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
