@@ -1,13 +1,10 @@
-from sqlmodel import create_engine, Session
-from sqlalchemy.pool import NullPool
-import os
+from sqlmodel import SQLModel, create_engine, Session
+from app.core.config import settings
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+engine = create_engine(settings.DATABASE_URL, echo=False)
 
-engine = create_engine(
-    DATABASE_URL,
-    poolclass=NullPool,  # obrigatório para Neon serverless
-)
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
 
 def get_session():
     with Session(engine) as session:
