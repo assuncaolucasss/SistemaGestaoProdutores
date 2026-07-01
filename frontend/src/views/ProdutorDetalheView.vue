@@ -1,83 +1,52 @@
 <template>
   <div class="max-w-3xl mx-auto px-6 py-10">
-    <button
-      @click="$router.back()"
-      class="flex items-center gap-1.5 text-primary-600 hover:text-primary-700 text-sm mb-6 bg-transparent border-none cursor-pointer"
-    >
+
+    <button @click="$router.back()"
+      class="flex items-center gap-1.5 text-primary-600 hover:text-primary-700 text-sm mb-6 bg-transparent border-none cursor-pointer">
       <ArrowLeft class="w-4 h-4" /> Voltar
     </button>
 
-    <div
-      v-if="erroPagina"
-      class="flex items-center gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-6"
-    >
-      <AlertCircle class="w-4 h-4" /> {{ erroPagina }}
-    </div>
+    <div v-if="produtor">
 
-    <div v-else-if="carregandoPagina" class="flex items-center justify-center gap-2 text-gray-400 py-24">
-      <Loader2 class="w-5 h-5 animate-spin" /> Carregando...
-    </div>
-
-    <div v-else-if="produtor">
       <div class="flex items-center justify-between mb-5">
         <div class="flex items-center gap-3">
           <div class="bg-primary-50 p-3 rounded-full">
             <User class="w-6 h-6 text-primary-600" />
           </div>
-          <h2 class="text-xl font-bold text-primary-600 uppercase">
-            {{ produtor.nome_completo || 'Produtor' }}
-          </h2>
+          <h2 class="text-xl font-bold text-primary-600 uppercase">{{ produtor.nome_completo || 'Produtor' }}</h2>
         </div>
-
         <div class="flex gap-2">
-          <button
-            v-if="isAdmin && !editando"
-            @click="iniciarEdicao"
-            class="flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm px-4 py-2 rounded-lg border-none cursor-pointer transition-colors"
-          >
+          <button v-if="isAdmin && !editando" @click="iniciarEdicao"
+            class="flex items-center gap-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm px-4 py-2 rounded-lg border-none cursor-pointer transition-colors">
             <Pencil class="w-3.5 h-3.5" /> Editar
           </button>
-
           <template v-if="editando">
-            <button
-              @click="salvar"
-              :disabled="salvando"
-              class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white text-sm px-4 py-2 rounded-lg border-none cursor-pointer transition-colors"
-            >
+            <button @click="salvar" :disabled="salvando"
+              class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white text-sm px-4 py-2 rounded-lg border-none cursor-pointer transition-colors">
               <Loader2 v-if="salvando" class="w-3.5 h-3.5 animate-spin" />
               <Save v-else class="w-3.5 h-3.5" />
               {{ salvando ? 'Salvando...' : 'Salvar' }}
             </button>
-
-            <button
-              @click="cancelarEdicao"
-              class="flex items-center gap-1.5 bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 text-sm px-4 py-2 rounded-lg cursor-pointer transition-colors"
-            >
+            <button @click="cancelarEdicao"
+              class="flex items-center gap-1.5 bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 text-sm px-4 py-2 rounded-lg cursor-pointer transition-colors">
               <X class="w-3.5 h-3.5" /> Cancelar
             </button>
           </template>
         </div>
       </div>
 
-      <div
-        v-if="erroSalvar"
-        class="flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 mb-4"
-      >
+      <div v-if="erroSalvar"
+        class="flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 mb-4">
         <AlertCircle class="w-4 h-4" /> {{ erroSalvar }}
       </div>
-
-      <div
-        v-if="sucessoSalvar"
-        class="flex items-center gap-2 text-green-700 text-xs bg-green-50 border border-green-200 rounded-lg px-4 py-2.5 mb-4"
-      >
+      <div v-if="sucessoSalvar"
+        class="flex items-center gap-2 text-green-700 text-xs bg-green-50 border border-green-200 rounded-lg px-4 py-2.5 mb-4">
         <CheckCircle class="w-4 h-4" /> Dados salvos com sucesso!
       </div>
 
       <div class="bg-white border border-gray-200 rounded-2xl p-7 mb-8 text-sm">
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-          Dados Pessoais
-        </h3>
 
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Dados Pessoais</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <FieldEdit label="Nome Completo"      :editing="editando" v-model="form.nome_completo"    :value="produtor.nome_completo" />
           <FieldEdit label="CPF"                :editing="editando" v-model="form.cpf_beneficiario" :value="produtor.cpf_beneficiario" type="cpf" />
@@ -90,10 +59,7 @@
 
         <hr class="border-gray-100 my-6" />
 
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-          Cônjuge
-        </h3>
-
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Cônjuge</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <FieldEdit label="Nome do Cônjuge" :editing="editando" v-model="form.conjuge_nome" :value="produtor.conjuge_nome" />
           <FieldEdit label="CPF do Cônjuge"  :editing="editando" v-model="form.cpf_conjuge"  :value="produtor.cpf_conjuge" type="cpf" />
@@ -101,18 +67,12 @@
 
         <hr class="border-gray-100 my-6" />
 
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-          Assentamento
-        </h3>
-
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Assentamento</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
             <div class="text-xs text-gray-400 mb-1">Assentamento</div>
-            <select
-              v-if="editando"
-              v-model="form.assentamento"
-              class="w-full px-3 py-2 border border-primary-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 uppercase"
-            >
+            <select v-if="editando" v-model="form.assentamento"
+              class="w-full px-3 py-2 border border-primary-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 uppercase">
               <option value="">—</option>
               <option>PA BRASÍLIA</option>
               <option>PA MARIA DE LOURDES RODRIGUES</option>
@@ -121,7 +81,6 @@
             </select>
             <div v-else class="text-gray-700 uppercase">{{ produtor.assentamento || '—' }}</div>
           </div>
-
           <FieldEdit label="Lote"                :editing="editando" v-model="form.lote"                :value="produtor.lote" />
           <FieldEdit label="Comunidade"          :editing="editando" v-model="form.comunidade"          :value="produtor.comunidade" />
           <FieldEdit label="Código Beneficiário" :editing="editando" v-model="form.codigo_beneficiario" :value="produtor.codigo_beneficiario" />
@@ -133,10 +92,7 @@
 
         <hr class="border-gray-100 my-6" />
 
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-          Endereço
-        </h3>
-
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Endereço</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <FieldEdit label="Endereço"  :editing="editando" v-model="form.endereco"  :value="produtor.endereco" />
           <FieldEdit label="CEP"       :editing="editando" v-model="form.cep"       :value="produtor.cep" type="cpf" />
@@ -146,32 +102,26 @@
 
         <hr class="border-gray-100 my-6" />
 
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-          DAP / CAF
-        </h3>
-
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">DAP / CAF</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <FieldEdit label="DAP/CAF"      :editing="editando" v-model="form.dap_caf"      :value="produtor.dap_caf" />
           <FieldEdit label="Data DAP/CAF" :editing="editando" v-model="form.data_dap_caf" :value="produtor.data_dap_caf" type="date" />
         </div>
+
       </div>
 
+      <!-- Programas de Fomento -->
       <h3 class="font-semibold text-gray-700 mb-4 flex items-center gap-2">
         <ClipboardList class="w-5 h-5 text-primary-600" /> Selecionar Programa de Fomento
       </h3>
-
       <div v-if="carregandoFomentos" class="flex items-center gap-2 text-gray-400 text-sm py-6">
         <Loader2 class="w-4 h-4 animate-spin" /> Carregando fomentos...
       </div>
-
-      <div
-        v-else-if="fomentos.length === 0"
-        class="flex flex-col items-center justify-center text-gray-400 py-8 gap-2 border border-dashed border-gray-200 rounded-xl mb-8"
-      >
+      <div v-else-if="fomentos.length === 0"
+        class="flex flex-col items-center justify-center text-gray-400 py-8 gap-2 border border-dashed border-gray-200 rounded-xl mb-8">
         <ClipboardList class="w-7 h-7 opacity-30" />
         <p class="text-sm">Nenhum programa de fomento cadastrado.</p>
       </div>
-
       <div v-else>
         <div
           v-for="f in fomentos"
@@ -186,13 +136,20 @@
 
       <hr class="border-gray-100 my-8" />
 
+      <!-- Rascunhos -->
       <RascunhosProdutor
         :produtor-id="produtorId"
         :produtor="produtor"
         :fomentos="fomentos"
         :submissoes-iniciais="submissoes"
       />
+
     </div>
+
+    <div v-else class="flex items-center justify-center gap-2 text-gray-400 py-24">
+      <Loader2 class="w-5 h-5 animate-spin" /> Carregando...
+    </div>
+
   </div>
 </template>
 
@@ -208,29 +165,29 @@ import {
   AlertCircle, CheckCircle, ClipboardList
 } from 'lucide-vue-next'
 
-const auth = useAuthStore()
-const isAdmin = computed(() => auth.eSuperusuario)
+const auth     = useAuthStore()
+const isAdmin  = computed(() => auth.eSuperusuario)
 
-const route = useRoute()
-const router = useRouter()
+const route      = useRoute()
+const router     = useRouter()
 const produtorId = route.params.id
 
-const produtor = ref(null)
-const fomentos = ref([])
-const submissoes = ref([])
-const carregandoPagina = ref(true)
-const erroPagina = ref('')
+const produtor         = ref(null)
+const fomentos         = ref([])
+const submissoes       = ref([])
 const carregandoFomentos = ref(false)
-const editando = ref(false)
-const salvando = ref(false)
-const erroSalvar = ref('')
-const sucessoSalvar = ref(false)
-const form = ref({})
+const editando         = ref(false)
+const salvando         = ref(false)
+const erroSalvar       = ref('')
+const sucessoSalvar    = ref(false)
+const form             = ref({})
 
+// ── Navegar para o formulário ──────────────────────────
 function irParaFormulario(fomentoId) {
   router.push(`/formulario/${produtorId}/${fomentoId}`)
 }
 
+// ── Edição ─────────────────────────────────────────────
 function iniciarEdicao() {
   form.value = { ...produtor.value }
   erroSalvar.value = ''
@@ -247,7 +204,6 @@ async function salvar() {
   salvando.value = true
   erroSalvar.value = ''
   sucessoSalvar.value = false
-
   try {
     const { data } = await api.patch(`/produtores/${produtorId}`, form.value)
     produtor.value = data
@@ -261,35 +217,27 @@ async function salvar() {
   }
 }
 
+// ── Carregamento inicial ───────────────────────────────
 onMounted(async () => {
-  carregandoPagina.value = true
-  erroPagina.value = ''
-
   try {
     const p = await api.get(`/produtores/${produtorId}`)
     produtor.value = p.data
   } catch (err) {
     console.error('Erro ao carregar produtor:', err)
-    erroPagina.value = err.response?.data?.detail || 'Erro ao carregar produtor.'
-  } finally {
-    carregandoPagina.value = false
   }
 
   carregandoFomentos.value = true
   try {
-    const f = await api.get('/fomentos')
+    const f = await api.get('/fomentos/')
     fomentos.value = f.data
   } catch (err) {
     console.error('Erro ao carregar fomentos:', err)
-    fomentos.value = []
   } finally {
     carregandoFomentos.value = false
   }
 
   try {
-    const s = await api.get('/submissoes', {
-      params: { produtor_id: produtorId }
-    })
+    const s = await api.get('/submissoes/', { params: { produtor_id: produtorId } })
     submissoes.value = s.data
   } catch (err) {
     console.error('Erro ao carregar submissões:', err)
