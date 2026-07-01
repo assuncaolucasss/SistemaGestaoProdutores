@@ -9,33 +9,39 @@ try:
 
     from app.models import *
     from app.models.base import create_db_and_tables
-    from app.api.routes.auth        import router as auth_router
-    from app.api.routes.produtores  import router as produtores_router
-    from app.api.routes.fomentos    import router as fomentos_router
-    from app.api.routes.submissoes  import router as submissoes_router
-    from app.api.routes.usuarios    import router as usuarios_router
-    from app.api.routes.formulario  import router as formulario_router
+    from app.api.routes.auth import router as auth_router
+    from app.api.routes.produtores import router as produtores_router
+    from app.api.routes.fomentos import router as fomentos_router
+    from app.api.routes.submissoes import router as submissoes_router
+    from app.api.routes.usuarios import router as usuarios_router
+    from app.api.routes.formulario import router as formulario_router
 
     app = FastAPI(title="Fomentos Agrícolas - Canaã dos Carajás")
 
+    origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://sistema-gestao-produtores.vercel.app",
+        "https://sistemagestaoprodutores.onrender.com",
+    ]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "https://sistemagestaoprodutores.onrender.com",
-            "https://sistema-gestao-produtores.vercel.app",
-        ],
+        allow_origins=origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=["*"],
     )
 
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError):
         erros = []
         for erro in exc.errors():
-            campo    = " → ".join(str(c) for c in erro["loc"] if c not in ("body",))
+            campo = " → ".join(str(c) for c in erro["loc"] if c not in ("body",))
             mensagem = erro["msg"].replace("Value error, ", "")
             erros.append({"campo": campo, "mensagem": mensagem})
+
         return JSONResponse(
             status_code=422,
             content={"detail": "Erro de validação", "erros": erros},
@@ -50,6 +56,10 @@ try:
             print("❌ ERRO NO STARTUP:")
             traceback.print_exc()
             raise e
+
+    @app.get("/")
+    def root():
+        return {"message": "API Fomentos Agrícolas online"}
 
     app.include_router(auth_router)
     app.include_router(produtores_router)
