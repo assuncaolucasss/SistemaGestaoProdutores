@@ -12,7 +12,7 @@ from app.models.usuario import Usuario
 router = APIRouter(prefix="/submissoes", tags=["Submissões"])
 
 
-@router.post("", response_model=SubmissaoRead)
+@router.post("/", response_model=SubmissaoRead)
 def criar_submissao(
     dados: SubmissaoCreate,
     session: Session = Depends(get_session),
@@ -25,7 +25,7 @@ def criar_submissao(
     return submissao
 
 
-@router.get("", response_model=List[SubmissaoRead])
+@router.get("/", response_model=List[SubmissaoRead])
 def listar_submissoes(
     produtor_id: Optional[int] = None,
     session: Session = Depends(get_session),
