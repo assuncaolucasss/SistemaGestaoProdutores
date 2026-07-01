@@ -61,30 +61,32 @@ def get_dados_formulario(
                         return json.loads(valor)
                     except Exception:
                         return []
-                return valor or []
+                if isinstance(valor, list):
+                    return valor
+                return []
 
             memoria = parse_json(caracteristica_raw.memoria_calculo)
             mao_obra = parse_json(caracteristica_raw.mao_obra_especializada)
 
-            itens_memoria = [
-                {
-                    "discriminacao": str(i.get("discriminacao", "")),
-                    "quantidade": float(i.get("quantidade", 0) or 0),
-                    "valor_unitario": float(i.get("valor_unitario", 0) or 0),
-                    "subtotal": float(i.get("subtotal", 0) or 0),
-                }
-                for i in memoria if isinstance(i, dict)
-            ]
+            itens_memoria = []
+            for i in memoria:
+                if isinstance(i, dict):
+                    itens_memoria.append({
+                        "discriminacao": str(i.get("discriminacao", "")),
+                        "quantidade": float(i.get("quantidade", 0) or 0),
+                        "valor_unitario": float(i.get("valor_unitario", 0) or 0),
+                        "subtotal": float(i.get("subtotal", 0) or 0),
+                    })
 
-            itens_mao_obra = [
-                {
-                    "descricao": str(i.get("descricao", "")),
-                    "visitas": float(i.get("visitas", i.get("qtd", 0)) or 0),
-                    "valor_unitario": float(i.get("valor_unitario", 0) or 0),
-                    "subtotal": float(i.get("subtotal", 0) or 0),
-                }
-                for i in mao_obra if isinstance(i, dict)
-            ]
+            itens_mao_obra = []
+            for i in mao_obra:
+                if isinstance(i, dict):
+                    itens_mao_obra.append({
+                        "descricao": str(i.get("descricao", "")),
+                        "visitas": float(i.get("visitas", i.get("qtd", 0)) or 0),
+                        "valor_unitario": float(i.get("valor_unitario", 0) or 0),
+                        "subtotal": float(i.get("subtotal", 0) or 0),
+                    })
 
             caracteristica = CaracteristicaFormulario(
                 id=caracteristica_raw.id,
