@@ -6,13 +6,13 @@ from datetime import datetime
 from app.models.base import get_session
 from app.models.submissao import Submissao
 from app.schemas.submissao import SubmissaoCreate, SubmissaoUpdate, SubmissaoRead
-from app.core.security import get_current_user, requer_superusuario
+from app.core.security import get_current_user
 from app.models.usuario import Usuario
 
 router = APIRouter(prefix="/submissoes", tags=["Submissões"])
 
 
-@router.post("/", response_model=SubmissaoRead)
+@router.post("", response_model=SubmissaoRead)
 def criar_submissao(
     dados: SubmissaoCreate,
     session: Session = Depends(get_session),
@@ -25,7 +25,7 @@ def criar_submissao(
     return submissao
 
 
-@router.get("/", response_model=List[SubmissaoRead])
+@router.get("", response_model=List[SubmissaoRead])
 def listar_submissoes(
     produtor_id: Optional[int] = None,
     session: Session = Depends(get_session),
@@ -59,8 +59,10 @@ def atualizar_submissao(
     submissao = session.get(Submissao, id)
     if not submissao:
         raise HTTPException(status_code=404, detail="Submissão não encontrada")
+
     for campo, valor in dados.model_dump(exclude_unset=True).items():
         setattr(submissao, campo, valor)
+
     submissao.atualizado_em = datetime.now()
     session.add(submissao)
     session.commit()
@@ -77,5 +79,6 @@ def deletar_submissao(
     submissao = session.get(Submissao, id)
     if not submissao:
         raise HTTPException(status_code=404, detail="Submissão não encontrada")
+
     session.delete(submissao)
     session.commit()
