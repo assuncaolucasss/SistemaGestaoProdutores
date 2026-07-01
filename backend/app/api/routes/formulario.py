@@ -104,20 +104,25 @@ def get_dados_formulario(
             .order_by(Submissao.id.desc())
         ).first()
 
-        return FormularioDadosRead(
-            produtor=produtor,
-            fomento=fomento,
-            classe=classe,
-            subclasse=subclasse,
-            caracteristica=caracteristica,
-            submissao_id=submissao.id if submissao else None,
-            numero_processo=submissao.numero_processo if submissao else None,
-            municipio_data=submissao.municipio_data if submissao else None,
-            data_assinatura=submissao.data_assinatura if submissao else None,
-        )
+        payload = {
+            "produtor": produtor,
+            "fomento": fomento,
+            "classe": classe,
+            "subclasse": subclasse,
+            "caracteristica": caracteristica,
+            "submissao_id": submissao.id if submissao else None,
+            "numero_processo": submissao.numero_processo if submissao else None,
+            "municipio_data": submissao.municipio_data if submissao else None,
+            "data_assinatura": str(submissao.data_assinatura) if submissao and submissao.data_assinatura else None,
+        }
+
+        return FormularioDadosRead.model_validate(payload)
 
     except HTTPException:
         raise
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Erro interno ao montar formulário: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro interno ao montar formulário: {str(e)}"
+        )
