@@ -1,6 +1,5 @@
 <template>
   <div class="max-w-4xl mx-auto px-6 py-10">
-
     <button
       @click="$router.back()"
       class="flex items-center gap-1.5 text-primary-600 hover:text-primary-700 text-sm mb-6 bg-transparent border-none cursor-pointer"
@@ -8,9 +7,18 @@
       <ArrowLeft class="w-4 h-4" /> Voltar
     </button>
 
-    <div v-if="produtor && fomento" class="bg-white border border-gray-200 rounded-2xl p-8">
+    <div
+      v-if="erroCarregamento"
+      class="flex items-center gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-6"
+    >
+      <AlertCircle class="w-4 h-4" /> {{ erroCarregamento }}
+    </div>
 
-      <!-- Cabeçalho -->
+    <div v-else-if="carregandoPagina" class="flex items-center justify-center gap-2 text-gray-400 py-24">
+      <Loader2 class="w-5 h-5 animate-spin" /> Carregando...
+    </div>
+
+    <div v-else-if="produtor && fomento" class="bg-white border border-gray-200 rounded-2xl p-8">
       <div class="flex items-center justify-between mb-2">
         <div>
           <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">
@@ -31,7 +39,6 @@
 
       <hr class="border-gray-100 mb-6" />
 
-      <!-- Dados do beneficiário -->
       <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
         Dados do Beneficiário
       </h3>
@@ -65,10 +72,7 @@
 
       <hr class="border-gray-100 mb-6" />
 
-      <!-- Campos do formulário -->
       <div class="flex flex-col gap-4 mb-6">
-
-        <!-- Seletor cascata -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="text-xs font-medium text-gray-600 mb-1 block">Modalidade</label>
@@ -106,7 +110,6 @@
           </div>
         </div>
 
-        <!-- Badge carregamento -->
         <div
           v-if="carregandoCaracteristica"
           class="flex items-center gap-2 text-gray-500 text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"
@@ -122,7 +125,6 @@
           Justificativa e memória de cálculo pré-preenchidas automaticamente.
         </div>
 
-        <!-- Segundo beneficiário -->
         <div v-if="eFomentoJovem" class="bg-amber-50 border border-amber-300 rounded-xl p-5">
           <h3 class="text-sm font-semibold text-amber-700 mb-4 flex items-center gap-2">
             <UserPlus class="w-4 h-4" /> Segundo Beneficiário
@@ -152,7 +154,6 @@
           </div>
         </div>
 
-        <!-- Entidade responsável -->
         <div>
           <label class="text-xs font-medium text-gray-600 mb-1 block">
             Entidade Responsável pela Elaboração do Projeto
@@ -175,7 +176,6 @@
           />
         </div>
 
-        <!-- Justificativa -->
         <div>
           <label class="text-xs font-medium text-gray-600 mb-1 block">
             Justificativa do Projeto Produtivo
@@ -189,7 +189,6 @@
         </div>
       </div>
 
-      <!-- Tabela de investimentos -->
       <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
         Memória de Cálculo — Investimentos
       </h3>
@@ -259,7 +258,6 @@
         <Plus class="w-3.5 h-3.5" /> Adicionar item
       </button>
 
-      <!-- Tabela de mão de obra -->
       <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
         Mão de Obra Especializada
       </h3>
@@ -329,7 +327,6 @@
         <Plus class="w-3.5 h-3.5" /> Adicionar item
       </button>
 
-      <!-- Município e Data -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div>
           <label class="text-xs font-medium text-gray-600 mb-1 block">Município</label>
@@ -351,14 +348,12 @@
         </div>
       </div>
 
-      <!-- Total -->
       <div class="bg-primary-50 border border-primary-600 rounded-xl px-6 py-4 text-right mb-6">
         <span class="text-primary-600 font-bold text-base">
           TOTAL FINAL: R$ {{ totalFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}
         </span>
       </div>
 
-      <!-- Alertas -->
       <div
         v-if="erro"
         class="flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 mb-4"
@@ -373,7 +368,6 @@
         <CheckCircle class="w-4 h-4" /> Formulário salvo com sucesso!
       </div>
 
-      <!-- Salvar -->
       <button
         @click="salvar"
         :disabled="salvando"
@@ -384,11 +378,6 @@
         {{ salvando ? 'Salvando...' : 'Salvar Formulário' }}
       </button>
     </div>
-
-    <div v-else class="flex items-center justify-center gap-2 text-gray-400 py-24">
-      <Loader2 class="w-5 h-5 animate-spin" /> Carregando...
-    </div>
-
   </div>
 </template>
 
@@ -417,6 +406,8 @@ const erro = ref('')
 const sucesso = ref(false)
 const caracteristicaCarregada = ref(false)
 const carregandoCaracteristica = ref(false)
+const carregandoPagina = ref(true)
+const erroCarregamento = ref('')
 
 let _resetandoClasse = false
 
@@ -867,6 +858,9 @@ async function salvar() {
 }
 
 onMounted(async () => {
+  carregandoPagina.value = true
+  erroCarregamento.value = ''
+
   try {
     const [dadosFormulario, hierarquiaResp] = await Promise.all([
       api.get(`/formulario/${produtorId}/${fomentoId}`),
@@ -888,7 +882,9 @@ onMounted(async () => {
     }
   } catch (e) {
     console.error('Erro ao carregar formulário:', e)
-    erro.value = 'Erro ao carregar dados do formulário.'
+    erroCarregamento.value = e?.response?.data?.detail || 'Erro ao carregar dados do formulário.'
+  } finally {
+    carregandoPagina.value = false
   }
 })
 </script>
