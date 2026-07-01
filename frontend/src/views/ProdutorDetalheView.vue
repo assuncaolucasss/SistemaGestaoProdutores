@@ -1,6 +1,5 @@
 <template>
   <div class="max-w-3xl mx-auto px-6 py-10">
-
     <button
       @click="$router.back()"
       class="flex items-center gap-1.5 text-primary-600 hover:text-primary-700 text-sm mb-6 bg-transparent border-none cursor-pointer"
@@ -8,8 +7,18 @@
       <ArrowLeft class="w-4 h-4" /> Voltar
     </button>
 
-    <div v-if="produtor">
+    <div
+      v-if="erroPagina"
+      class="flex items-center gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-6"
+    >
+      <AlertCircle class="w-4 h-4" /> {{ erroPagina }}
+    </div>
 
+    <div v-else-if="carregandoPagina" class="flex items-center justify-center gap-2 text-gray-400 py-24">
+      <Loader2 class="w-5 h-5 animate-spin" /> Carregando...
+    </div>
+
+    <div v-else-if="produtor">
       <div class="flex items-center justify-between mb-5">
         <div class="flex items-center gap-3">
           <div class="bg-primary-50 p-3 rounded-full">
@@ -65,7 +74,6 @@
       </div>
 
       <div class="bg-white border border-gray-200 rounded-2xl p-7 mb-8 text-sm">
-
         <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
           Dados Pessoais
         </h3>
@@ -146,10 +154,8 @@
           <FieldEdit label="DAP/CAF"      :editing="editando" v-model="form.dap_caf"      :value="produtor.dap_caf" />
           <FieldEdit label="Data DAP/CAF" :editing="editando" v-model="form.data_dap_caf" :value="produtor.data_dap_caf" type="date" />
         </div>
-
       </div>
 
-      <!-- Programas de Fomento -->
       <h3 class="font-semibold text-gray-700 mb-4 flex items-center gap-2">
         <ClipboardList class="w-5 h-5 text-primary-600" /> Selecionar Programa de Fomento
       </h3>
@@ -180,20 +186,13 @@
 
       <hr class="border-gray-100 my-8" />
 
-      <!-- Rascunhos -->
       <RascunhosProdutor
         :produtor-id="produtorId"
         :produtor="produtor"
         :fomentos="fomentos"
         :submissoes-iniciais="submissoes"
       />
-
     </div>
-
-    <div v-else class="flex items-center justify-center gap-2 text-gray-400 py-24">
-      <Loader2 class="w-5 h-5 animate-spin" /> Carregando...
-    </div>
-
   </div>
 </template>
 
@@ -219,6 +218,8 @@ const produtorId = route.params.id
 const produtor = ref(null)
 const fomentos = ref([])
 const submissoes = ref([])
+const carregandoPagina = ref(true)
+const erroPagina = ref('')
 const carregandoFomentos = ref(false)
 const editando = ref(false)
 const salvando = ref(false)
@@ -261,11 +262,17 @@ async function salvar() {
 }
 
 onMounted(async () => {
+  carregandoPagina.value = true
+  erroPagina.value = ''
+
   try {
     const p = await api.get(`/produtores/${produtorId}`)
     produtor.value = p.data
   } catch (err) {
     console.error('Erro ao carregar produtor:', err)
+    erroPagina.value = err.response?.data?.detail || 'Erro ao carregar produtor.'
+  } finally {
+    carregandoPagina.value = false
   }
 
   carregandoFomentos.value = true
@@ -274,6 +281,7 @@ onMounted(async () => {
     fomentos.value = f.data
   } catch (err) {
     console.error('Erro ao carregar fomentos:', err)
+    fomentos.value = []
   } finally {
     carregandoFomentos.value = false
   }
