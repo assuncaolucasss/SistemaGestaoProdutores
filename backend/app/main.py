@@ -1,29 +1,92 @@
 import traceback
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session, select
-from typing import List, Optional
-from datetime import datetime
 
-from app.models.base import get_session
-from app.models.submissao import Submissao
-from app.schemas.submissao import SubmissaoCreate, SubmissaoUpdate, SubmissaoRead
-from app.core.security import get_current_user
-from app.models.usuario import Usuario
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from starlette.middleware.cors import CORSMiddleware
 
-router = APIRouter(prefix="/submissoes", tags=["Submissões"])
+from app.models import *
+from app.models.base import create_db_and_tables
+from app.api.routes.auth import router as auth_router
+from app.api.routes.produtores import router as produtores_router
+from app.api.routes.fomentos import router as fomentos_router
+from app.api.routes.submissoes import router as submissoes_router
+from app.api.routes.usuarios import router as usuarios_router
+from app.api.routes.formulario import router as formulario_router
 
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://sistema-gestao-produtores.vercel.app",
+    "https://sistemagestaoprodutores.onrender.com",
+]
 
-@router.get("/", response_model=List[SubmissaoRead])
-def listar_submissoes(
-    produtor_id: Optional[int] = None,
-    session: Session = Depends(get_session),
-    _: Usuario = Depends(get_current_user)
-):
-    try:
-        query = select(Submissao)
-        if produtor_id:
-            query = query.where(Submissao.produtor_id == produtor_id)
-        return session.exec(query).all()
-    except Exception as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Erro ao listar submissões: {str(e)}")
+fastapi_app = FastAPI(
+    title="Fomentos Agrícolas - Canaã dos Carajás",
+    redirect_slashes=False,
+)
+
+def apply_cors(request: Request, response: JSONResponse):
+    origin = request.headers.get("origin")
+    if origin in origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
+
+@fastapi_app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    erros = []
+    for erro in exc.errors():
+        campo = " → ".join(str(c) for c in erro["loc"] if c != "body")
+        mensagem = erro["msg"].replace("Value error, ", "")
+        erros.append({"campo": campo, "mensagem": mensagem})
+
+    response = JSONResponse(
+        status_code=422,
+        content={"detail": "Erro de validação", "erros": erros},
+    )
+    return apply_cors(request, response)
+
+@fastapi_app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    response = JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+    )
+    return apply_cors(request, response)
+
+@fastapi_app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    traceback.print_exc()
+    response = JSONResponse(
+        status_code=500,
+        content={"detail": "Erro interno do servidor"},
+    )
+    return apply_cors(request, response)
+
+@fastapi_app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+    print("✅ Banco conectado com sucesso")
+
+@fastapi_app.get("/")
+def root():
+    return {"message": "API Fomentos Agrícolas online"}
+
+fastapi_app.include_router(auth_router)
+fastapi_app.include_router(produtores_router)
+fastapi_app.include_router(fomentos_router)
+fastapi_app.include_router(submissoes_router)
+fastapi_app.include_router(usuarios_router)
+fastapi_app.include_router(formulario_router)
+
+app = CORSMiddleware(
+    app=fastapi_app,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
