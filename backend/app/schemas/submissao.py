@@ -1,3 +1,5 @@
+schemas/submissão.py
+
 from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
@@ -31,8 +33,8 @@ class SubmissaoCreate(BaseModel):
     segundo_beneficiario_cpf: Optional[str] = None
     municipio_data: Optional[str] = None
     data_assinatura: Optional[str] = None
-    itens_investimento: Optional[List[ItemInvestimento]] = Field(default_factory=list)
-    itens_mao_obra: Optional[List[ItemMaoObra]] = Field(default_factory=list)
+    itens_investimento: List[ItemInvestimento] = Field(default_factory=list)
+    itens_mao_obra: List[ItemMaoObra] = Field(default_factory=list)
 
 
 class SubmissaoUpdate(BaseModel):
@@ -47,8 +49,8 @@ class SubmissaoUpdate(BaseModel):
     segundo_beneficiario_cpf: Optional[str] = None
     municipio_data: Optional[str] = None
     data_assinatura: Optional[str] = None
-    itens_investimento: Optional[List[ItemInvestimento]] = None
-    itens_mao_obra: Optional[List[ItemMaoObra]] = None
+    itens_investimento: List[ItemInvestimento] = Field(default_factory=list)
+    itens_mao_obra: List[ItemMaoObra] = Field(default_factory=list)
 
 
 class SubmissaoRead(BaseModel):
@@ -67,8 +69,8 @@ class SubmissaoRead(BaseModel):
     segundo_beneficiario_cpf: Optional[str] = None
     municipio_data: Optional[str] = None
     data_assinatura: Optional[str] = None
-    itens_investimento: Optional[List[ItemInvestimento]] = None
-    itens_mao_obra: Optional[List[ItemMaoObra]] = None
+    itens_investimento: List[ItemInvestimento] = Field(default_factory=list)
+    itens_mao_obra: List[ItemMaoObra] = Field(default_factory=list)
     criado_em: datetime
     atualizado_em: datetime
 
