@@ -5,7 +5,7 @@
     <div class="bg-gradient-to-br from-primary-600 to-green-500 text-white py-20 px-6 text-center">
       <h1 class="text-3xl sm:text-4xl font-bold mb-4">Sistema de Gestão de Produtores</h1>
       <p class="text-base sm:text-lg opacity-90 max-w-xl mx-auto mb-8">
-        Plataforma de cadastro e acompanhamento de produtores rurais dos assentamentos do sul e sudeste do Pará.
+        Plataforma de cadastro e acompanhamento de produtores rurais.
       </p>
       <router-link v-if="!auth.logado" to="/login">
         <button class="bg-white text-primary-600 font-bold px-8 py-3 rounded-lg text-base hover:bg-gray-100 transition-colors cursor-pointer border-none">
