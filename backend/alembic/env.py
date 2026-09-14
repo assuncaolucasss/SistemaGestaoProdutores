@@ -1,4 +1,4 @@
-rom logging.config import fileConfig
+from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from sqlalchemy import text
@@ -10,7 +10,7 @@ load_dotenv()
 
 from sqlmodel import SQLModel
 from app.models.base import get_session
-from app.models import *  # importa TODOS os modelos
+from app.models import *
 
 target_metadata = SQLModel.metadata
 
