@@ -1,6 +1,7 @@
-from logging.config import fileConfig
+rom logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+from sqlalchemy import text
 from alembic import context
 import os
 from dotenv import load_dotenv
@@ -47,7 +48,6 @@ def run_migrations_online():
         )
 
         with context.begin_transaction():
-            connection.execute("SELECT 1")
             context.run_migrations()
 
 if context.is_offline_mode():
