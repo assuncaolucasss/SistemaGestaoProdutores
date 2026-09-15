@@ -48,7 +48,7 @@ def total_produtores(
     return session.exec(query).one()
 
 
-@router.get("/assentamentos/resumo", response_model=List[dict])
+@router.get("/assentamentos/resumo")
 def resumo_assentamentos(
     session: Session = Depends(get_session),
     _: Usuario = Depends(get_current_user)
