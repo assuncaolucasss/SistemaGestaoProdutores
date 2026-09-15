@@ -24,7 +24,7 @@
 
     <!-- Assentamentos -->
     <h3 class="text-base font-semibold text-primary-600 uppercase tracking-widest mb-4">
-      Assentamentos Atendidos
+      Organizações de Produtores Rurais Atendidas
     </h3>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
       <div v-for="a in assentamentos" :key="a"
