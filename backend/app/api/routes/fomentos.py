@@ -144,12 +144,24 @@ def deletar_classe(
     session: Session = Depends(get_session),
     _: Usuario = Depends(requer_superusuario)
 ):
+    """Exclui fisicamente a classe e suas características associadas."""
     classe = session.get(ModalidadeClasse, classe_id)
     if not classe:
         raise HTTPException(status_code=404, detail="Classe não encontrada")
-    classe.ativo = False
-    session.add(classe)
-    session.commit()
+    
+    try:
+        caracteristicas = session.exec(
+            select(CaracteristicaModalidade).where(CaracteristicaModalidade.classe_id == classe.id)
+        ).all()
+        for c in caracteristicas:
+            session.delete(c)
+            
+        session.flush()
+        session.delete(classe)
+        session.commit()
+    except IntegrityError as exc:
+        session.rollback()
+        raise HTTPException(status_code=409, detail="Registros relacionados impedem a exclusão.") from exc
 
 
 # ── Subclasses — rotas fixas com prefixo literal ──────
@@ -178,12 +190,24 @@ def deletar_subclasse(
     session: Session = Depends(get_session),
     _: Usuario = Depends(requer_superusuario)
 ):
+    """Exclui fisicamente a subclasse e suas características associadas."""
     sub = session.get(ModalidadeSubclasse, subclasse_id)
     if not sub:
         raise HTTPException(status_code=404, detail="Subclasse não encontrada")
-    sub.ativo = False
-    session.add(sub)
-    session.commit()
+    
+    try:
+        caracteristicas = session.exec(
+            select(CaracteristicaModalidade).where(CaracteristicaModalidade.subclasse_id == sub.id)
+        ).all()
+        for c in caracteristicas:
+            session.delete(c)
+            
+        session.flush()
+        session.delete(sub)
+        session.commit()
+    except IntegrityError as exc:
+        session.rollback()
+        raise HTTPException(status_code=409, detail="Registros relacionados impedem a exclusão.") from exc
 
 
 # ══════════════════════════════════════════════════════
@@ -232,7 +256,6 @@ def deletar_fomento(
         raise HTTPException(status_code=404, detail="Fomento não encontrado")
 
     try:
-        # 1. Buscar todas as classes e subclasses do fomento
         classes = session.exec(
             select(ModalidadeClasse).where(ModalidadeClasse.fomento_id == id)
         ).all()
@@ -240,8 +263,6 @@ def deletar_fomento(
             select(ModalidadeSubclasse).where(ModalidadeSubclasse.fomento_id == id)
         ).all()
 
-        # 2. Excluir as características associadas a essas classes ou subclasses
-        # Usamos um dicionário para não tentar deletar a mesma característica duas vezes
         caracteristicas_para_deletar = {}
         
         if classes:
@@ -265,32 +286,28 @@ def deletar_fomento(
         for caract in caracteristicas_para_deletar.values():
             session.delete(caract)
             
-        # FORÇA A EXCLUSÃO DAS CARACTERÍSTICAS NO BANCO AGORA
         session.flush() 
 
-        # 3. Excluir as subclasses
         for sub in subclasses:
             session.delete(sub)
             
-        session.flush() # FORÇA A EXCLUSÃO DAS SUBCLASSES
+        session.flush() 
 
-        # 4. Excluir as classes
         for classe in classes:
             session.delete(classe)
             
-        session.flush() # FORÇA A EXCLUSÃO DAS CLASSES
+        session.flush() 
 
-        # 5. Finalmente, excluir o fomento e confirmar a transação global
         session.delete(fomento)
         session.commit()
 
     except IntegrityError as exc:
-        # Aborta a transação se alguma chave estrangeira não mapeada impedir a exclusão
         session.rollback()
         raise HTTPException(
             status_code=409,
             detail="Não foi possível remover o fomento porque ainda existem registros relacionados em outra tabela."
         ) from exc
+
 
 @router.get("/{id}/hierarquia", response_model=HierarquiaFomentoRead)
 def hierarquia_fomento(
