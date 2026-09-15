@@ -67,10 +67,10 @@
 
         <hr class="border-gray-100 my-6" />
 
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Assentamento</h3>
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Organização Rural</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <div class="text-xs text-gray-400 mb-1">Assentamento</div>
+            <div class="text-xs text-gray-400 mb-1">Organização Rural</div>
             <select v-if="editando" v-model="form.assentamento"
               class="w-full px-3 py-2 border border-primary-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 uppercase">
               <option value="">—</option>
