@@ -224,7 +224,9 @@ watch(form.value.subclasse_id, async (subclasseId) => {
 
   carregandoCaracteristica.value = true
   try {
-    const { data } = await api.get(`/fomentos/${fomentoId}/caracteristicas/${form.value.classe_id}/${subclasseId}`)
+    // Endpoint correto conforme backend: /fomentos/caracteristicas/{classe_id}/{subclasse_id}
+    const { data } = await api.get(`/fomentos/caracteristicas/${form.value.classe_id}/${subclasseId}`)
+    
     form.value.justificativa = data.justificativa || ''
     form.value.entidade_elaboracao = data.entidade_elaboracao || ''
     form.value.texto_entidade_responsavel = data.texto_entidade_responsavel || ''
