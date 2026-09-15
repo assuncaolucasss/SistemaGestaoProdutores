@@ -278,11 +278,7 @@ async function emitirPDF() {
     container.innerHTML = html
     document.body.appendChild(container)
     await new Promise(r => setTimeout(r, 300))
-    
-    // A mágica acontece aqui: contorna o problema de UMD do html2canvas no Vite
-    const h2c = html2canvas.default || html2canvas
-    
-    const canvas = await h2c(container, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false, width: container.scrollWidth, height: container.scrollHeight })
+    const canvas = await html2canvas(container, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false, width: container.scrollWidth, height: container.scrollHeight })
     document.body.removeChild(container)
     const imgData = canvas.toDataURL('image/png')
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
