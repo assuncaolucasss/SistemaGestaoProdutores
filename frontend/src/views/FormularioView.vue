@@ -32,7 +32,7 @@
             <label class="text-xs font-medium text-gray-600 mb-1 block">Modalidade</label>
             <select v-model="form.classe_id" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600">
               <option :value="null">Selecione...</option>
-              <option v-for="c in hierarquia" :key="c.classe?.id || c.id" :value="c.classe?.id || c.id">{{ c.classe?.nome || c.nome }} ({{ (c.classe?.escopo || c.escopo || '').toUpperCase() }})</option>
+              <option v-for="c in hierarquia" :key="c.classe?.id" :value="c.classe.id">{{ c.classe.nome }} ({{ c.classe.escopo.toUpperCase() }})</option>
             </select>
           </div>
           <div>
@@ -44,7 +44,7 @@
               class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 disabled:opacity-50"
             >
               <option :value="null">Selecione...</option>
-              <option v-for="si in subclassesDaClasse" :key="si.subclasse?.id || si.id" :value="si.subclasse?.id || si.id">{{ si.subclasse?.nome || si.nome }}</option>
+              <option v-for="si in subclassesDaClasse" :key="si.subclasse.id" :value="si.subclasse.id">{{ si.subclasse.nome }}</option>
             </select>
           </div>
         </div>
@@ -186,7 +186,7 @@ const form = ref({
 const subclassesDaClasse = computed(() => {
   console.log('🔍 computed subclassesDaClasse - classe_id:', form.value.classe_id)
   if (!form.value.classe_id) return []
-  const encontrado = hierarquia.value.find(h => (h.classe?.id || h.id) === form.value.classe_id)
+  const encontrado = hierarquia.value.find(h => h.classe.id === form.value.classe_id)
   console.log('🔍 encontrado:', encontrado)
   return encontrado?.subclasses || []
 })
@@ -225,12 +225,15 @@ watch(form.value.classe_id, (novaClasse) => {
   setTimeout(() => { resetandoClasse = false }, 0)
 })
 
-watch(form.value.subclasse_id, async (nova, antiga) => {
-  console.log('🔔 WATCH subclasse_id disparado!')
-  console.log('Antigo:', antiga)
-  console.log('Novo:', nova)
-  console.log('classe_id:', form.value.classe_id)
-  console.log('resetandoClasse:', resetandoClasse)
+watch([() => form.value.subclasse_id, () => form.value.classe_id], async ([nova, novaClasse], [antiga, antigaClasse]) => {
+  console.log('🔔 WATCH [subclasse_id, classe_id] disparado!')
+  console.log('Antigo:', { subclasse: antiga, classe: antigaClasse })
+  console.log('Novo:', { subclasse: nova, classe: novaClasse })
+  
+  if (!nova || !novaClasse) {
+    console.log('⚠️ subclasse_id ou classe_id é nulo')
+    return
+  }
   
   if (resetandoClasse) {
     console.log('⚠️ Ignorando - está resetando')
@@ -239,23 +242,13 @@ watch(form.value.subclasse_id, async (nova, antiga) => {
   
   limparCamposCaracteristica()
   erro.value = ''
-  
-  if (!nova) {
-    console.log('⚠️ subclasse_id é nulo')
-    return
-  }
-  
-  if (!form.value.classe_id) {
-    console.log('⚠️ classe_id é nulo')
-    return
-  }
 
   console.log('✅ Iniciando requisição...')
-  console.log('URL:', `/fomentos/caracteristicas/${form.value.classe_id}/${nova}`)
+  console.log('URL:', `/fomentos/caracteristicas/${novaClasse}/${nova}`)
   
   carregandoCaracteristica.value = true
   try {
-    const { data } = await api.get(`/fomentos/caracteristicas/${form.value.classe_id}/${nova}`)
+    const { data } = await api.get(`/fomentos/caracteristicas/${novaClasse}/${nova}`)
     console.log('✅ Resposta:', data)
     
     form.value.justificativa = data.justificativa || ''
@@ -286,7 +279,7 @@ watch(form.value.subclasse_id, async (nova, antiga) => {
   } finally {
     carregandoCaracteristica.value = false
   }
-})
+}, { immediate: false })
 
 function calcularSubtotal(item) {
   item.subtotal = (item.quantidade || 0) * (item.valor_unitario || 0)
