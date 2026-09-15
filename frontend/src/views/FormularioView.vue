@@ -5,7 +5,6 @@
     </button>
 
     <div v-if="produtor && fomento" class="bg-white border border-gray-200 rounded-2xl p-8">
-      <!-- Cabeç··lio -->
       <div class="flex items-center justify-between mb-2">
         <div>
           <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">{{ produtor.codigo_beneficiario }} | Produtor ID: {{ produtorId }}</p>
@@ -20,11 +19,11 @@
 
       <hr class="border-gray-100 mb-6" />
 
-      <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Dados do Beneficiá··rio</h3>
+      <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Dados do Beneficiário</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mb-6">
-        <div><span class="text-gray-400 text-xs">Beneficiá··rio</span><p class="font-medium text-gray-700 uppercase">{{ produtor.nome_completo }}</p></div>
+        <div><span class="text-gray-400 text-xs">Beneficiário</span><p class="font-medium text-gray-700 uppercase">{{ produtor.nome_completo }}</p></div>
         <div><span class="text-gray-400 text-xs">CPF</span><p class="font-medium text-gray-700">{{ produtor.cpf_beneficiario }}</p></div>
-        <div><span class="text-gray-400 text-xs">Cô···njuge</span><p class="font-medium text-gray-700 uppercase">{{ produtor.conjuge_nome }}</p></div>
+        <div><span class="text-gray-400 text-xs">Cônjuge</span><p class="font-medium text-gray-700 uppercase">{{ produtor.conjuge_nome }}</p></div>
         <div><span class="text-gray-400 text-xs">CPF Cônjuge</span><p class="font-medium text-gray-700">{{ produtor.cpf_conjuge }}</p></div>
         <div><span class="text-gray-400 text-xs">Assentamento</span><p class="font-medium text-gray-700 uppercase">{{ produtor.assentamento }}</p></div>
         <div><span class="text-gray-400 text-xs">Lote</span><p class="font-medium text-gray-700 uppercase">{{ produtor.lote }}</p></div>
@@ -58,14 +57,14 @@
         </div>
 
         <div v-if="eFomentoJovem" class="bg-amber-50 border border-amber-300 rounded-xl p-5">
-          <h3 class="text-sm font-semibold text-amber-700 mb-4 flex items-center gap-2"><UserPlus class="w-4 h-4" /> Segundo Beneficiá··rio</h3>
+          <h3 class="text-sm font-semibold text-amber-700 mb-4 flex items-center gap-2"><UserPlus class="w-4 h-4" /> Segundo Beneficiário</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label class="text-xs font-medium text-gray-600 mb-1 block">Nome</label><input v-model="form.segundo_beneficiario_nome" class="w-full px-3 py-2.5 border border-amber-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-amber-400" /></div>
             <div><label class="text-xs font-medium text-gray-600 mb-1 block">CPF</label><input v-model="form.segundo_beneficiario_cpf" placeholder="000.000.000-00" maxlength="14" class="w-full px-3 py-2.5 border border-amber-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" /></div>
           </div>
         </div>
 
-        <div><label class="text-xs font-medium text-gray-600 mb-1 block">Entidade Responsá··vel</label><input v-model="form.entidade_elaboracao" placeholder="EX: EMATER" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" /></div>
+        <div><label class="text-xs font-medium text-gray-600 mb-1 block">Entidade Responsável</label><input v-model="form.entidade_elaboracao" placeholder="EX: EMATER" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" /></div>
         <div class="mt-3 mb-5"><textarea v-model="form.texto_entidade_responsavel" rows="3" placeholder="TEXTO ADICIONAL..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600 resize-y" /></div>
 
         <div><label class="text-xs font-medium text-gray-600 mb-1 block">Justificativa</label><textarea v-model="form.justificativa" rows="4" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 resize-y" /></div>
@@ -75,9 +74,9 @@
           <table class="w-full text-sm border-collapse">
             <thead>
               <tr class="bg-gray-50 text-gray-500 text-xs">
-                <th class="text-left px-3 py-2.5 border border-gray-200">Discriminaç··o</th>
+                <th class="text-left px-3 py-2.5 border border-gray-200">Discriminação</th>
                 <th class="text-center px-3 py-2.5 border border-gray-200 w-20">Qtd</th>
-                <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Vlr Unitá··rio</th>
+                <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Vlr Unitário</th>
                 <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Subtotal</th>
                 <th class="w-10 border-none bg-transparent"></th>
               </tr>
@@ -96,14 +95,14 @@
         </div>
         <button @click="adicionarItem('investimento')" class="flex items-center gap-1.5 bg-primary-50 hover:bg-primary-100 border border-primary-600 text-primary-600 text-xs px-3 py-2 rounded-lg cursor-pointer mb-8"><Plus class="w-3.5 h-3.5" /> Adicionar item</button>
 
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Mä··o de Obra</h3>
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Mão de Obra</h3>
         <div class="overflow-x-auto mb-4">
           <table class="w-full text-sm border-collapse">
             <thead>
               <tr class="bg-gray-50 text-gray-500 text-xs">
-                <th class="text-left px-3 py-2.5 border border-gray-200">Descriç··o</th>
+                <th class="text-left px-3 py-2.5 border border-gray-200">Descrição</th>
                 <th class="text-center px-3 py-2.5 border border-gray-200 w-20">Visitas</th>
-                <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Vlr Unitá··rio</th>
+                <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Vlr Unitário</th>
                 <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Subtotal</th>
                 <th class="w-10 border-none bg-transparent"></th>
               </tr>
@@ -123,7 +122,7 @@
         <button @click="adicionarItem('mao_obra')" class="flex items-center gap-1.5 bg-primary-50 hover:bg-primary-100 border border-primary-600 text-primary-600 text-xs px-3 py-2 rounded-lg cursor-pointer mb-8"><Plus class="w-3.5 h-3.5" /> Adicionar item</button>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          <div><label class="text-xs font-medium text-gray-600 mb-1 block">Municí··pio</label><input v-model="form.municipio_data" placeholder="EX: CANAÃ· DOS CARAJÁ·S" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" /></div>
+          <div><label class="text-xs font-medium text-gray-600 mb-1 block">Município</label><input v-model="form.municipio_data" placeholder="EX: CANAÃ DOS CARAJÁS" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" /></div>
           <div><label class="text-xs font-medium text-gray-600 mb-1 block">Data</label><input v-model="form.data_assinatura" type="date" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600" /></div>
         </div>
 
@@ -135,7 +134,7 @@
         <div v-if="sucesso" class="flex items-center gap-2 text-green-700 text-xs bg-green-50 border border-green-200 rounded-lg px-4 py-2.5 mb-4"><CheckCircle class="w-4 h-4" /> Salvo com sucesso!</div>
 
         <button @click="salvar" :disabled="salvando" class="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl border-none cursor-pointer text-sm">
-          <Loader2 v-if="salvando" class="w-4 h-4 animate-spin" /><Save v-else class="w-4 h-4" /> {{ salvando ? 'Salvando...' : 'Salvar Formulá··rio' }}
+          <Loader2 v-if="salvando" class="w-4 h-4 animate-spin" /><Save v-else class="w-4 h-4" /> {{ salvando ? 'Salvando...' : 'Salvar Formulário' }}
         </button>
       </div>
     </div>
@@ -176,7 +175,7 @@ const form = ref({
   justificativa: '',
   entidade_elaboracao: '',
   texto_entidade_responsavel: '',
-  municipio_data: 'CANAÃ· DOS CARAJÁ·S',
+  municipio_data: 'CANAÃ DOS CARAJÁS',
   data_assinatura: '',
   itens_investimento: [],
   itens_mao_obra: [],
@@ -280,13 +279,12 @@ async function salvar() {
     return
   }
   if (eFomentoJovem.value && (!form.value.segundo_beneficiario_nome || !form.value.segundo_beneficiario_cpf)) {
-    erro.value = 'Preencha o segundo beneficiá··rio.'
+    erro.value = 'Preencha o segundo beneficiário.'
     return
   }
 
   salvando.value = true
   try {
-    // Normaliza o payload para garantir que está no formato correto
     const payload = {
       fomento_id: parseInt(fomentoId),
       produtor_id: parseInt(produtorId),
@@ -332,7 +330,7 @@ async function emitirPDF() {
   gerandoPDF.value = true
   try {
     const nomeModalidade = form.value.modalidade || hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome || ''
-    const html = `<div style="font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000;width:794px;box-sizing:border-box;"><div style="text-align:center;border-bottom:2px solid #1a6b3c;padding-bottom:16px;margin-bottom:24px;"><p style="color:#999;margin:0 0 4px 0;font-size:11px;text-transform:uppercase;">${produtor.value?.codigo_beneficiario} | Produtor ID: ${produtorId}</p><h1 style="color:#1a6b3c;margin:0;font-size:18px;text-transform:uppercase;">${fomento.value?.nome}</h1><p style="color:#666;margin:4px 0 0 0;font-size:11px;">MODALIDADE: ${nomeModalidade}</p></div><h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Dados do Beneficiá··rio</h2><table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;"><tr><td style="padding:7px 10px;border:1px solid #ccc;width:50%;"><strong>BENEFICIÁ·RIO</strong> ${produtor.value?.nome_completo}</td><td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_beneficiario}</td></tr></table><h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Memó···ria de Cáá··lculo - Investimentos</h2><table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;"><thead><tr style="background:#f0f0f0;"><th style="padding:7px 10px;border:1px solid #ccc;text-align:left;">DISCRIMINAÇ·O</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:60px;">QTD</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:110px;">VLR UNITÁ·RIO</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:110px;">SUBTOTAL</th></tr></thead><tbody>${form.value.itens_investimento.map(item => `<tr><td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${item.discriminacao}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">${item.quantidade}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">R$ ${Number(item.valor_unitario).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;font-weight:bold;">R$ ${Number(item.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td></tr>`).join('')}</tbody></table><div style="background:#e8f5e9;padding:14px 18px;border-radius:6px;text-align:right;margin-bottom:40px;border:2px solid #1a6b3c;"><strong style="color:#1a6b3c;font-size:14px;">TOTAL FINAL: R$ ${totalFinal.value.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong></div></div>`
+    const html = `<div style="font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000;width:794px;box-sizing:border-box;"><div style="text-align:center;border-bottom:2px solid #1a6b3c;padding-bottom:16px;margin-bottom:24px;"><p style="color:#999;margin:0 0 4px 0;font-size:11px;text-transform:uppercase;">${produtor.value?.codigo_beneficiario} | Produtor ID: ${produtorId}</p><h1 style="color:#1a6b3c;margin:0;font-size:18px;text-transform:uppercase;">${fomento.value?.nome}</h1><p style="color:#666;margin:4px 0 0 0;font-size:11px;">MODALIDADE: ${nomeModalidade}</p></div><h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Dados do Beneficiário</h2><table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;"><tr><td style="padding:7px 10px;border:1px solid #ccc;width:50%;"><strong>BENEFICIÁRIO</strong> ${produtor.value?.nome_completo}</td><td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_beneficiario}</td></tr></table><h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Memória de Cálculo - Investimentos</h2><table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;"><thead><tr style="background:#f0f0f0;"><th style="padding:7px 10px;border:1px solid #ccc;text-align:left;">DISCRIMINAÇÃO</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:60px;">QTD</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:110px;">VLR UNITÁRIO</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:110px;">SUBTOTAL</th></tr></thead><tbody>${form.value.itens_investimento.map(item => `<tr><td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${item.discriminacao}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">${item.quantidade}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">R$ ${Number(item.valor_unitario).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;font-weight:bold;">R$ ${Number(item.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td></tr>`).join('')}</tbody></table><div style="background:#e8f5e9;padding:14px 18px;border-radius:6px;text-align:right;margin-bottom:40px;border:2px solid #1a6b3c;"><strong style="color:#1a6b3c;font-size:14px;">TOTAL FINAL: R$ ${totalFinal.value.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong></div></div>`
     const container = document.createElement('div')
     container.style.cssText = 'position:fixed;top:0;left:-9999px;width:794px;background:#fff;z-index:-1;'
     container.innerHTML = html
