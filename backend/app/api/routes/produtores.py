@@ -48,6 +48,25 @@ def total_produtores(
     return session.exec(query).one()
 
 
+@router.get("/assentamentos/resumo", response_model=List[dict])
+def resumo_assentamentos(
+    session: Session = Depends(get_session),
+    _: Usuario = Depends(get_current_user)
+):
+    """Retorna contagem de produtores por assentamento."""
+    resultado = session.exec(
+        select(Produtor.assentamento, func.count(Produtor.id).label("produtores"))
+        .where(Produtor.ativo == True)
+        .group_by(Produtor.assentamento)
+        .order_by(Produtor.assentamento)
+    ).all()
+    
+    return [
+        {"nome": nome, "produtores": total, "municipio": "Pará"}
+        for nome, total in resultado if nome
+    ]
+
+
 @router.get("/", response_model=List[ProdutorRead])
 def listar_produtores(
     busca: Optional[str] = Query(None),
