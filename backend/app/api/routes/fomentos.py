@@ -45,13 +45,13 @@ def criar_fomento(
         session.commit()
     except IntegrityError:
         session.rollback()
-        raise HTTPException(status_code=409, detail=f"Já´´ existe um fomento com o nome '{dados.nome}'")
+        raise HTTPException(status_code=409, detail=f"Já existe um fomento com o nome '{dados.nome}'")
     session.refresh(fomento)
     return fomento
 
 
-# ── Caracterí´´sticas — rotas fixas com prefixo literal ─
-# CRÍ´TICO: estas rotas devem vir ANTES de /{id} e /{fomento_id}/...
+# ── Características — rotas fixas com prefixo literal ─
+# CRÍTICO: estas rotas devem vir ANTES de /{id} e /{fomento_id}/...
 # Se vierem depois, o FastAPI interpreta "caracteristicas" como o valor de {id}
 
 @router.get("/caracteristicas/{classe_id}/{subclasse_id}", response_model=CaracteristicaRead)
@@ -69,7 +69,7 @@ def buscar_caracteristica(
         )
     ).first()
     if not caract:
-        raise HTTPException(status_code=404, detail="Caracterí´´sticas n ´o cadastradas para esta combinaç´´o")
+        raise HTTPException(status_code=404, detail="Características não cadastradas para esta combinação")
     return caract
 
 
@@ -89,7 +89,7 @@ def criar_caracteristica(
     if existente:
         raise HTTPException(
             status_code=409,
-            detail="Já´´ existe uma caracterí´´stica para esta combinaç´´o. Use PATCH para atualizar."
+            detail="Já existe uma característica para esta combinação. Use PATCH para atualizar."
         )
     caract = CaracteristicaModalidade(**dados.model_dump())
     session.add(caract)
@@ -107,7 +107,7 @@ def atualizar_caracteristica(
 ):
     caract = session.get(CaracteristicaModalidade, id)
     if not caract:
-        raise HTTPException(status_code=404, detail="Caracterí´´stica n ´o encontrada")
+        raise HTTPException(status_code=404, detail="Característica não encontrada")
     for campo, valor in dados.model_dump(exclude_unset=True).items():
         setattr(caract, campo, valor)
     caract.atualizado_em = datetime.now()
@@ -118,7 +118,7 @@ def atualizar_caracteristica(
 
 
 # ── Classes — rotas fixas com prefixo literal ─────────
-# També´´m devem vir ANTES de /{id}
+# Também devem vir ANTES de /{id}
 
 @router.patch("/classes/{classe_id}", response_model=ModalidadeClasseRead)
 def atualizar_classe(
@@ -129,7 +129,7 @@ def atualizar_classe(
 ):
     classe = session.get(ModalidadeClasse, classe_id)
     if not classe:
-        raise HTTPException(status_code=404, detail="Classe n ´o encontrada")
+        raise HTTPException(status_code=404, detail="Classe não encontrada")
     for campo, valor in dados.model_dump(exclude_unset=True).items():
         setattr(classe, campo, valor)
     session.add(classe)
@@ -146,7 +146,7 @@ def deletar_classe(
 ):
     classe = session.get(ModalidadeClasse, classe_id)
     if not classe:
-        raise HTTPException(status_code=404, detail="Classe n ´o encontrada")
+        raise HTTPException(status_code=404, detail="Classe não encontrada")
     classe.ativo = False
     session.add(classe)
     session.commit()
@@ -163,7 +163,7 @@ def atualizar_subclasse(
 ):
     sub = session.get(ModalidadeSubclasse, subclasse_id)
     if not sub:
-        raise HTTPException(status_code=404, detail="Subclasse n ´o encontrada")
+        raise HTTPException(status_code=404, detail="Subclasse não encontrada")
     for campo, valor in dados.model_dump(exclude_unset=True).items():
         setattr(sub, campo, valor)
     session.add(sub)
@@ -180,14 +180,14 @@ def deletar_subclasse(
 ):
     sub = session.get(ModalidadeSubclasse, subclasse_id)
     if not sub:
-        raise HTTPException(status_code=404, detail="Subclasse n ´o encontrada")
+        raise HTTPException(status_code=404, detail="Subclasse não encontrada")
     sub.ativo = False
     session.add(sub)
     session.commit()
 
 
 # ══════════════════════════════════════════════════════
-# ROTAS COM PARÂ´METRO DINÂ´MICO {id} — vêm POR ÚLTIMO
+# ROTAS COM PARÂMETRO DINÂMICO {id} — vêm POR ÚLTIMO
 # ══════════════════════════════════════════════════════
 
 @router.get("/{id}", response_model=FomentoRead)
@@ -198,7 +198,7 @@ def detalhe_fomento(
 ):
     fomento = session.get(Fomento, id)
     if not fomento:
-        raise HTTPException(status_code=404, detail="Fomento n ´o encontrado")
+        raise HTTPException(status_code=404, detail="Fomento não encontrado")
     return fomento
 
 
@@ -211,7 +211,7 @@ def atualizar_fomento(
 ):
     fomento = session.get(Fomento, id)
     if not fomento:
-        raise HTTPException(status_code=404, detail="Fomento n ´o encontrado")
+        raise HTTPException(status_code=404, detail="Fomento não encontrado")
     for campo, valor in dados.model_dump(exclude_unset=True).items():
         setattr(fomento, campo, valor)
     session.add(fomento)
@@ -226,22 +226,31 @@ def deletar_fomento(
     session: Session = Depends(get_session),
     _: Usuario = Depends(requer_superusuario)
 ):
-    """Exclui logicamente um fomento, arquivando o nome para permitir reuso futuro."""
+    """Exclui fisicamente um fomento e todos os seus dados associados em cascata."""
     fomento = session.get(Fomento, id)
     if not fomento:
-        raise HTTPException(status_code=404, detail="Fomento n ´o encontrado")
+        raise HTTPException(status_code=404, detail="Fomento não encontrado")
 
-    from sqlalchemy import update as sa_update
+    # 1. Excluir características associadas às classes deste fomento
+    classes = session.exec(select(ModalidadeClasse).where(ModalidadeClasse.fomento_id == id)).all()
+    for classe in classes:
+        caracteristicas = session.exec(
+            select(CaracteristicaModalidade).where(CaracteristicaModalidade.classe_id == classe.id)
+        ).all()
+        for caract in caracteristicas:
+            session.delete(caract)
 
-    # Libera o nome adicionando sufixo com timestamp,
-    # permitindo que um novo fomento com o mesmo nome seja criado
-    nome_arquivado = f"{fomento.nome}__EXCLUIDO_{int(datetime.now().timestamp())}"
+    # 2. Excluir subclasses associadas a este fomento
+    subclasses = session.exec(select(ModalidadeSubclasse).where(ModalidadeSubclasse.fomento_id == id)).all()
+    for sub in subclasses:
+        session.delete(sub)
 
-    session.execute(
-        sa_update(Fomento)
-        .where(Fomento.id == id)
-        .values(ativo=False, nome=nome_arquivado)
-    )
+    # 3. Excluir classes associadas a este fomento
+    for classe in classes:
+        session.delete(classe)
+
+    # 4. Excluir o fomento
+    session.delete(fomento)
     session.commit()
 
 
@@ -253,7 +262,7 @@ def hierarquia_fomento(
 ):
     fomento = session.get(Fomento, id)
     if not fomento:
-        raise HTTPException(status_code=404, detail="Fomento n ´o encontrado")
+        raise HTTPException(status_code=404, detail="Fomento não encontrado")
 
     classes = session.exec(
         select(ModalidadeClasse)
@@ -308,7 +317,7 @@ def criar_classe(
     _: Usuario = Depends(requer_superusuario)
 ):
     if not session.get(Fomento, fomento_id):
-        raise HTTPException(status_code=404, detail="Fomento n ´o encontrado")
+        raise HTTPException(status_code=404, detail="Fomento não encontrado")
     if dados.escopo not in ("8k", "16k"):
         raise HTTPException(status_code=422, detail="escopo deve ser '8k' ou '16k'")
     classe = ModalidadeClasse(**dados.model_dump())
@@ -343,7 +352,7 @@ def criar_subclasse(
     _: Usuario = Depends(requer_superusuario)
 ):
     if not session.get(Fomento, fomento_id):
-        raise HTTPException(status_code=404, detail="Fomento n ´o encontrado")
+        raise HTTPException(status_code=404, detail="Fomento não encontrado")
     if dados.escopo not in ("8k", "16k"):
         raise HTTPException(status_code=422, detail="escopo deve ser '8k' ou '16k'")
     subclasse = ModalidadeSubclasse(**dados.model_dump())
