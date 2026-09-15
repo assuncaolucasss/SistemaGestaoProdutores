@@ -205,6 +205,7 @@ function limparCamposCaracteristica() {
 }
 
 watch(form.value.classe_id, (novaClasse) => {
+  console.log('🔔 WATCH classe_id disparado:', novaClasse)
   resetandoClasse = true
   form.value.subclasse_id = null
   limparCamposCaracteristica()
@@ -217,15 +218,38 @@ watch(form.value.classe_id, (novaClasse) => {
   setTimeout(() => { resetandoClasse = false }, 0)
 })
 
-watch(form.value.subclasse_id, async (subclasseId) => {
-  if (resetandoClasse) return
+watch(form.value.subclasse_id, async (nova, antiga) => {
+  console.log('🔔 WATCH subclasse_id disparado!')
+  console.log('Antigo:', antiga)
+  console.log('Novo:', nova)
+  console.log('classe_id:', form.value.classe_id)
+  console.log('resetandoClasse:', resetandoClasse)
+  
+  if (resetandoClasse) {
+    console.log('⚠️ Ignorando - está resetando')
+    return
+  }
+  
   limparCamposCaracteristica()
   erro.value = ''
-  if (!subclasseId || !form.value.classe_id) return
+  
+  if (!nova) {
+    console.log('⚠️ subclasse_id é nulo')
+    return
+  }
+  
+  if (!form.value.classe_id) {
+    console.log('⚠️ classe_id é nulo')
+    return
+  }
 
+  console.log('✅ Iniciando requisição...')
+  console.log('URL:', `/fomentos/caracteristicas/${form.value.classe_id}/${nova}`)
+  
   carregandoCaracteristica.value = true
   try {
-    const { data } = await api.get(`/fomentos/caracteristicas/${form.value.classe_id}/${subclasseId}`)
+    const { data } = await api.get(`/fomentos/caracteristicas/${form.value.classe_id}/${nova}`)
+    console.log('✅ Resposta:', data)
     
     form.value.justificativa = data.justificativa || ''
     form.value.entidade_elaboracao = data.entidade_elaboracao || ''
@@ -244,6 +268,10 @@ watch(form.value.subclasse_id, async (subclasseId) => {
     }))
     caracteristicaCarregada.value = true
   } catch (e) {
+    console.log('❌ Erro:', e)
+    console.log('Status:', e?.response?.status)
+    console.log('Resposta:', e?.response?.data)
+    
     if (e?.response?.status !== 404) {
       erro.value = e?.response?.data?.detail || 'Erro ao carregar características.'
     }
@@ -300,19 +328,26 @@ async function emitirPDF() {
 }
 
 onMounted(async () => {
+  console.log('🔔 onMounted - iniciando')
   try {
     const [dadosFormulario, hierarquiaResp] = await Promise.all([
       api.get(`/formulario/${produtorId}/${fomentoId}`),
       api.get(`/fomentos/${fomentoId}/hierarquia`),
     ])
+    console.log('📦 hierarquiaResp.data:', hierarquiaResp.data)
+    console.log('📦 hierarquia.value antes:', hierarquia.value)
+    
     produtor.value = dadosFormulario.data.produtor
     fomento.value = dadosFormulario.data.fomento
     hierarquia.value = hierarquiaResp.data.hierarquia
+    
+    console.log('📦 hierarquia.value depois:', hierarquia.value)
+    
     if (dadosFormulario.data.numero_processo) form.value.numero_processo = dadosFormulario.data.numero_processo
     if (dadosFormulario.data.municipio_data) form.value.municipio_data = dadosFormulario.data.municipio_data
     if (dadosFormulario.data.data_assinatura) form.value.data_assinatura = dadosFormulario.data.data_assinatura
   } catch (e) {
-    console.error('Erro ao carregar formulário:', e)
+    console.error('❌ Erro ao carregar:', e)
     erro.value = 'Erro ao carregar dados.'
   }
 })
