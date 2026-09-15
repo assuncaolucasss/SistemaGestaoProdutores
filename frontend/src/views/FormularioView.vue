@@ -7,7 +7,7 @@
     <div v-if="produtor && fomento" class="bg-white border border-gray-200 rounded-2xl p-8">
       <div class="flex items-center justify-between mb-2">
         <div>
-          <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">{{ produtor.codigo_beneficiario }} | Produtor ID: {{ produtorId }}</p>
+          <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">{{ produtor.codigo_beneficiario }}</p>
           <h2 class="text-xl font-bold text-primary-600 uppercase">{{ fomento.nome }}</h2>
         </div>
       </div>
@@ -224,7 +224,7 @@ watch(form.value.subclasse_id, async (subclasseId) => {
 
   carregandoCaracteristica.value = true
   try {
-    const { data } = await api.get(`/fomentos/caracteristicas/${form.value.classe_id}/${subclasseId}`)
+    const { data } = await api.get(`/fomentos/${fomentoId}/caracteristicas/${form.value.classe_id}/${subclasseId}`)
     form.value.justificativa = data.justificativa || ''
     form.value.entidade_elaboracao = data.entidade_elaboracao || ''
     form.value.texto_entidade_responsavel = data.texto_entidade_responsavel || ''
@@ -272,7 +272,8 @@ async function emitirPDF() {
   gerandoPDF.value = true
   try {
     const nomeModalidade = form.value.modalidade || hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome || ''
-    const html = `<div style="font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000;width:794px;box-sizing:border-box;"><div style="text-align:center;border-bottom:2px solid #1a6b3c;padding-bottom:16px;margin-bottom:24px;"><p style="color:#999;margin:0 0 4px 0;font-size:11px;text-transform:uppercase;">${produtor.value?.codigo_beneficiario} | Produtor ID: ${produtorId}</p><h1 style="color:#1a6b3c;margin:0;font-size:18px;text-transform:uppercase;">${fomento.value?.nome}</h1><p style="color:#666;margin:4px 0 0 0;font-size:11px;">MODALIDADE: ${nomeModalidade}</p></div><h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Dados do Beneficiário</h2><table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;"><tr><td style="padding:7px 10px;border:1px solid #ccc;width:50%;"><strong>BENEFICIÁRIO</strong> ${produtor.value?.nome_completo}</td><td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_beneficiario}</td></tr></table><h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Memória de Cálculo - Investimentos</h2><table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;"><thead><tr style="background:#f0f0f0;"><th style="padding:7px 10px;border:1px solid #ccc;text-align:left;">DISCRIMINAÇÃO</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:60px;">QTD</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:110px;">VLR UNITÁRIO</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:110px;">SUBTOTAL</th></tr></thead><tbody>${form.value.itens_investimento.map(item => `<tr><td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${item.discriminacao}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">${item.quantidade}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">R$ ${Number(item.valor_unitario).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;font-weight:bold;">R$ ${Number(item.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td></tr>`).join('')}</tbody></table><div style="background:#e8f5e9;padding:14px 18px;border-radius:6px;text-align:right;margin-bottom:40px;border:2px solid #1a6b3c;"><strong style="color:#1a6b3c;font-size:14px;">TOTAL FINAL: R$ ${totalFinal.value.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong></div></div>`
+    const nomeBeneficiario = (produtor.value?.nome_completo || '').toUpperCase()
+    const html = `<div style="font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000;width:794px;box-sizing:border-box;"><div style="text-align:center;border-bottom:2px solid #1a6b3c;padding-bottom:16px;margin-bottom:24px;"><p style="color:#999;margin:0 0 4px 0;font-size:11px;text-transform:uppercase;">${produtor.value?.codigo_beneficiario}</p><h1 style="color:#1a6b3c;margin:0;font-size:18px;text-transform:uppercase;">${fomento.value?.nome}</h1><p style="color:#666;margin:4px 0 0 0;font-size:11px;">MODALIDADE: ${nomeModalidade}</p></div><h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Dados do Beneficiário</h2><table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;"><tr><td style="padding:7px 10px;border:1px solid #ccc;width:50%;"><strong>BENEFICIÁRIO</strong> ${nomeBeneficiario}</td><td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_beneficiario}</td></tr></table><h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Memória de Cálculo - Investimentos</h2><table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;"><thead><tr style="background:#f0f0f0;"><th style="padding:7px 10px;border:1px solid #ccc;text-align:left;">DISCRIMINAÇÃO</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:60px;">QTD</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:110px;">VLR UNITÁRIO</th><th style="padding:7px 10px;border:1px solid #ccc;text-align:center;width:110px;">SUBTOTAL</th></tr></thead><tbody>${form.value.itens_investimento.map(item => `<tr><td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${item.discriminacao}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">${item.quantidade}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">R$ ${Number(item.valor_unitario).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td><td style="padding:7px 10px;border:1px solid #ccc;text-align:center;font-weight:bold;">R$ ${Number(item.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td></tr>`).join('')}</tbody></table><div style="background:#e8f5e9;padding:14px 18px;border-radius:6px;text-align:right;margin-bottom:40px;border:2px solid #1a6b3c;"><strong style="color:#1a6b3c;font-size:14px;">TOTAL FINAL: R$ ${totalFinal.value.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong></div></div>`
     const container = document.createElement('div')
     container.style.cssText = 'position:fixed;top:0;left:-9999px;width:794px;background:#fff;z-index:-1;'
     container.innerHTML = html
@@ -286,7 +287,7 @@ async function emitirPDF() {
     const pageWidth = pdf.internal.pageSize.getWidth()
     const imgHeight = (pageWidth * canvas.height) / canvas.width
     pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight)
-    const nomeArquivo = `formulario_${produtor.value?.nome_completo.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`
+    const nomeArquivo = `formulario_${(produtor.value?.nome_completo || 'produtor').replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`
     pdf.save(nomeArquivo)
   } catch (e) {
     console.error('Erro ao gerar PDF:', e)
