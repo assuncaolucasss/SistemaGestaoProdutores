@@ -43,9 +43,14 @@ def criar_fomento(
     session.add(fomento)
     try:
         session.commit()
-    except IntegrityError:
+    except IntegrityError as exc:
         session.rollback()
-        raise HTTPException(status_code=409, detail=f"Já existe um fomento com o nome '{dados.nome}'")
+        # Extrai o erro real disparado pelo PostgreSQL para debug no Frontend
+        erro_banco = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+        raise HTTPException(
+            status_code=409, 
+            detail=f"Falha no Banco de Dados: {erro_banco}"
+        )
     session.refresh(fomento)
     return fomento
 
