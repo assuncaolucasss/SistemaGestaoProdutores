@@ -182,9 +182,10 @@ const subclassesDaClasse = computed(() => {
   return hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.subclasses || []
 })
 
+// Correção dos parênteses aplicados aqui:
 const eFomentoJovem = computed(() => {
   const nome = hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome ?? ''
-  return nome.toLowerCase().includes('jovem') || form.value.modalidade?.toLowerCase().includes('jovem') ?? false
+  return nome.toLowerCase().includes('jovem') || (form.value.modalidade?.toLowerCase().includes('jovem') ?? false)
 })
 
 const totalFinal = computed(() => {
