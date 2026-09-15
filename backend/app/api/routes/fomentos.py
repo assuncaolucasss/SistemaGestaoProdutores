@@ -231,28 +231,66 @@ def deletar_fomento(
     if not fomento:
         raise HTTPException(status_code=404, detail="Fomento não encontrado")
 
-    # 1. Excluir características associadas às classes deste fomento
-    classes = session.exec(select(ModalidadeClasse).where(ModalidadeClasse.fomento_id == id)).all()
-    for classe in classes:
-        caracteristicas = session.exec(
-            select(CaracteristicaModalidade).where(CaracteristicaModalidade.classe_id == classe.id)
+    try:
+        # 1. Buscar todas as classes e subclasses do fomento
+        classes = session.exec(
+            select(ModalidadeClasse).where(ModalidadeClasse.fomento_id == id)
         ).all()
-        for caract in caracteristicas:
+        subclasses = session.exec(
+            select(ModalidadeSubclasse).where(ModalidadeSubclasse.fomento_id == id)
+        ).all()
+
+        # 2. Excluir as características associadas a essas classes ou subclasses
+        # Usamos um dicionário para não tentar deletar a mesma característica duas vezes
+        caracteristicas_para_deletar = {}
+        
+        if classes:
+            caract_classes = session.exec(
+                select(CaracteristicaModalidade).where(
+                    CaracteristicaModalidade.classe_id.in_([c.id for c in classes])
+                )
+            ).all()
+            for c in caract_classes:
+                caracteristicas_para_deletar[c.id] = c
+                
+        if subclasses:
+            caract_subs = session.exec(
+                select(CaracteristicaModalidade).where(
+                    CaracteristicaModalidade.subclasse_id.in_([s.id for s in subclasses])
+                )
+            ).all()
+            for c in caract_subs:
+                caracteristicas_para_deletar[c.id] = c
+
+        for caract in caracteristicas_para_deletar.values():
             session.delete(caract)
+            
+        # FORÇA A EXCLUSÃO DAS CARACTERÍSTICAS NO BANCO AGORA
+        session.flush() 
 
-    # 2. Excluir subclasses associadas a este fomento
-    subclasses = session.exec(select(ModalidadeSubclasse).where(ModalidadeSubclasse.fomento_id == id)).all()
-    for sub in subclasses:
-        session.delete(sub)
+        # 3. Excluir as subclasses
+        for sub in subclasses:
+            session.delete(sub)
+            
+        session.flush() # FORÇA A EXCLUSÃO DAS SUBCLASSES
 
-    # 3. Excluir classes associadas a este fomento
-    for classe in classes:
-        session.delete(classe)
+        # 4. Excluir as classes
+        for classe in classes:
+            session.delete(classe)
+            
+        session.flush() # FORÇA A EXCLUSÃO DAS CLASSES
 
-    # 4. Excluir o fomento
-    session.delete(fomento)
-    session.commit()
+        # 5. Finalmente, excluir o fomento e confirmar a transação global
+        session.delete(fomento)
+        session.commit()
 
+    except IntegrityError as exc:
+        # Aborta a transação se alguma chave estrangeira não mapeada impedir a exclusão
+        session.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Não foi possível remover o fomento porque ainda existem registros relacionados em outra tabela."
+        ) from exc
 
 @router.get("/{id}/hierarquia", response_model=HierarquiaFomentoRead)
 def hierarquia_fomento(
