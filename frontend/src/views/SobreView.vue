@@ -10,14 +10,14 @@
     </div>
 
     <p class="text-gray-500 mb-4">
-      O Sistema de Gest ´o de Produtores Rurais foi desenvolvido para facilitar o cadastro,
+      O Sistema de Gestão de Produtores Rurais foi desenvolvido para facilitar o cadastro,
       consulta e acompanhamento de produtores rurais beneficiários de programas de fomento
       nas organizações de produtores rurais do Brasil.
     </p>
     <p class="text-gray-500 mb-10">
       Por meio da plataforma, técnicos e gestores podem acessar dados atualizados de cada
-      produtor, gerar formulários e registrar informaç ´es sobre programas como DAP/CAF,
-      homologaç ´es e atividades produtivas.
+      produtor, gerar formulários e registrar informações sobre programas como DAP/CAF,
+      homologações e atividades produtivas.
     </p>
 
     <hr class="border-gray-100 mb-8" />
