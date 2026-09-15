@@ -4,7 +4,7 @@
 
       <router-link to="/home" class="flex items-center gap-2 no-underline">
         <Sprout class="text-white w-5 h-5" />
-        <span class="text-white font-bold text-sm hidden sm:block">SGP</span>
+        <span class="text-white font-bold text-sm hidden sm:block">SGPR</span>
       </router-link>
 
       <!-- Desktop links -->
