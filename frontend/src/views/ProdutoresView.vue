@@ -18,13 +18,10 @@
           class="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent" />
       </div>
       <select v-model="assentamentoFiltro" @change="onFiltro"
-  class="py-2.5 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent uppercase">
-  <option value="">Todos as organizações de produtores rurais</option>
-  <option value="PA BRASÍLIA">PA BRASÍLIA</option>
-  <option value="PA MARIA DE LOURDES RODRIGUES">PA MARIA DE LOURDES RODRIGUES</option>
-  <option value="PA MONTEPÍO">PA MONTEPÍO</option>
-  <option value="PA UNIÃO AMEIRCO SANTANA">PA UNIÃO AMERICO SANTANA</option>
-</select>
+        class="py-2.5 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent uppercase">
+        <option value="">Todas as organizações de produtores rurais</option>
+        <option v-for="org in assentamentos" :key="org" :value="org">{{ org }}</option>
+      </select>
     </div>
 
     <!-- Loading -->
@@ -65,7 +62,7 @@
         <p class="text-sm">Nenhum produtor encontrado.</p>
       </div>
 
-      <!-- Paginação -->
+      <!-- Paginacao -->
       <div v-if="totalPaginas > 1" class="flex items-center justify-center gap-2 mt-6">
         <button @click="irPara(paginaAtual - 1)" :disabled="paginaAtual === 1"
           class="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer bg-white transition-colors">
@@ -117,15 +114,12 @@
             class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600" />
           <input v-model="form.codigo_beneficiario"
             @input="form.codigo_beneficiario = form.codigo_beneficiario.toUpperCase()"
-            placeholder="CÓDIGO DO BENEFICIÁRIO"
+            placeholder="CÓ´DIGO DO BENEFICIÁ´RIO"
             class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" />
           <select v-model="form.assentamento"
             class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600">
-            <option value="">SELECIONE O ASSENTAMENTO *</option>
-            <option>PA BRASÍLIA</option>
-            <option>PA MARIA DE LOURDES RODRIGUES</option>
-            <option>PA MONTEPÍO</option>
-            <option>PA UNIÃO AMEIRCO SANTANA</option>
+            <option value="">SELECIONE A ORGANIZAÇ´O *</option>
+            <option v-for="org in assentamentos" :key="org" :value="org">{{ org }}</option>
           </select>
           <input v-model="form.lote"
             @input="form.lote = form.lote.toUpperCase()"
@@ -133,7 +127,7 @@
             class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" />
           <input v-model="form.situacao"
             @input="form.situacao = form.situacao.toUpperCase()"
-            placeholder="SITUAÇÃO"
+            placeholder="SITUAÇ´O"
             class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" />
           <input v-model="form.telefone"
             placeholder="Telefone"
@@ -160,7 +154,7 @@
       </div>
     </div>
 
-    <!-- Modal confirmar remoção -->
+    <!-- Modal confirmar remoç´´o -->
     <div v-if="produtorParaRemover" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
       <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-8 text-center">
         <div class="flex justify-center mb-4">
@@ -172,7 +166,7 @@
         <p class="text-gray-400 text-sm mb-6">
           Tem certeza que deseja remover
           <strong class="text-gray-600 uppercase">{{ produtorParaRemover.nome_completo || 'este produtor' }}</strong>?
-          Esta ação não pode ser desfeita.
+          Esta aç ´o n ´o pode ser desfeita.
         </p>
         <div class="flex gap-3">
           <button @click="produtorParaRemover = null"
@@ -213,6 +207,7 @@ const salvando            = ref(false)
 const erroModal           = ref('')
 const produtorParaRemover = ref(null)
 const removendo           = ref(false)
+const assentamentos       = ref([])
 
 const POR_PAGINA  = 15
 const paginaAtual = ref(1)
@@ -246,6 +241,16 @@ function formatarCPF(valor) {
 }
 
 let debounceTimer = null
+
+async function carregarAssentamentos() {
+  try {
+    const res = await api.get('/produtores/assentamentos/resumo')
+    assentamentos.value = res.data.map(a => a.nome).sort()
+  } catch (err) {
+    console.error('Erro ao carregar assentamentos:', err)
+    assentamentos.value = []
+  }
+}
 
 async function buscar() {
   carregando.value = true
@@ -301,7 +306,7 @@ function abrirModalNovo() {
 
 async function salvarProdutor() {
   if (!form.value.nome_completo || !form.value.assentamento) {
-    erroModal.value = 'Nome completo e assentamento são obrigatórios.'
+    erroModal.value = 'Nome completo e organizaç´´o s ´o obrigató´´´os.'
     return
   }
   salvando.value  = true
@@ -335,5 +340,8 @@ async function executarRemocao() {
   }
 }
 
-onMounted(buscar)
+onMounted(async () => {
+  await carregarAssentamentos()
+  await buscar()
+})
 </script>
