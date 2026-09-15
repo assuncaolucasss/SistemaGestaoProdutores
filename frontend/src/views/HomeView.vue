@@ -25,7 +25,19 @@
       <p class="text-center text-gray-500 text-sm mb-10">
         Acompanhe os dados dos assentamentos atendidos pela plataforma.
       </p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <!-- Estado de carregamento -->
+      <div v-if="carregando" class="text-center text-gray-400 text-sm py-10">
+        Carregando assentamentos...
+      </div>
+
+      <!-- Nenhum assentamento cadastrado -->
+      <div v-else-if="assentamentos.length === 0" class="text-center text-gray-400 text-sm py-10">
+        Nenhum produtor cadastrado no momento.
+      </div>
+
+      <!-- Lista de assentamentos -->
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div v-for="a in assentamentos" :key="a.nome"
           class="bg-white border border-gray-200 rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
           <div class="flex justify-center mb-3">
@@ -34,7 +46,7 @@
             </div>
           </div>
           <strong class="text-primary-600 block mb-1 text-sm">{{ a.nome }}</strong>
-          <div class="text-gray-400 text-xs mb-3">{{ a.municipio }}</div>
+          <div class="text-gray-400 text-xs mb-3">{{ a.municipio || 'Pará' }}</div>
           <span class="bg-primary-50 text-primary-600 text-xs px-3 py-1 rounded-full inline-flex items-center gap-1">
             <Users class="w-3 h-3" /> {{ a.produtores }} produtores
           </span>
@@ -104,15 +116,28 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { Sprout, Users, ClipboardList, LogIn } from 'lucide-vue-next'
+import api from '../services/api' // ajuste o caminho conforme sua estrutura (axios instance)
 
 const auth = useAuthStore()
+const assentamentos = ref([])
+const carregando = ref(true)
 
-const assentamentos = [
-  { nome: 'PA Brasília',                   municipio: 'Pará', produtores: 82  },
-  { nome: 'PA Maria De Lourdes Rodrigues', municipio: 'Pará', produtores: 74  },
-  { nome: 'PA Montepío',                   municipio: 'Pará', produtores: 149 },
-  { nome: 'PA União Ameirco Santana',      municipio: 'Pará', produtores: 49  },
-]
+async function carregarAssentamentos() {
+  try {
+    const { data } = await api.get('/produtores/assentamentos/resumo')
+    assentamentos.value = data
+  } catch (erro) {
+    console.error('Erro ao carregar assentamentos:', erro)
+    assentamentos.value = []
+  } finally {
+    carregando.value = false
+  }
+}
+
+onMounted(() => {
+  carregarAssentamentos()
+})
 </script>
