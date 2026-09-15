@@ -5,7 +5,7 @@
     </button>
 
     <div v-if="produtor && fomento" class="bg-white border border-gray-200 rounded-2xl p-8">
-      <!-- Cabealho -->
+      <!-- Cabeçalho -->
       <div class="flex items-center justify-between mb-2">
         <div>
           <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">{{ produtor.codigo_beneficiario }} | Produtor ID: {{ produtorId }}</p>
@@ -20,11 +20,11 @@
 
       <hr class="border-gray-100 mb-6" />
 
-      <!-- Dados do beneficirio -->
-      <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Dados do Beneficirio</h3>
+      <!-- Dados do beneficiário -->
+      <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Dados do Beneficiário</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mb-6">
         <div>
-          <span class="text-gray-400 text-xs">Beneficirio</span>
+          <span class="text-gray-400 text-xs">Beneficiário</span>
           <p class="font-medium text-gray-700 uppercase">{{ produtor.nome_completo }}</p>
         </div>
         <div>
@@ -32,11 +32,11 @@
           <p class="font-medium text-gray-700">{{ produtor.cpf_beneficiario }}</p>
         </div>
         <div>
-          <span class="text-gray-400 text-xs">Cnjuge</span>
+          <span class="text-gray-400 text-xs">Cônjuge</span>
           <p class="font-medium text-gray-700 uppercase">{{ produtor.conjuge_nome }}</p>
         </div>
         <div>
-          <span class="text-gray-400 text-xs">CPF Cnjuge</span>
+          <span class="text-gray-400 text-xs">CPF Cônjuge</span>
           <p class="font-medium text-gray-700">{{ produtor.cpf_conjuge }}</p>
         </div>
         <div>
@@ -51,7 +51,7 @@
 
       <hr class="border-gray-100 mb-6" />
 
-      <!-- Campos do formulrio -->
+      <!-- Campos do formulário -->
       <div class="flex flex-col gap-4 mb-6">
         <!-- Seletor cascata -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -77,21 +77,21 @@
 
         <!-- Badge carregamento -->
         <div v-if="carregandoCaracteristica" class="flex items-center gap-2 text-gray-500 text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
-          <Loader2 class="w-3.5 h-3.5 animate-spin" /> Carregando caractersticas...
+          <Loader2 class="w-3.5 h-3.5 animate-spin" /> Carregando características...
         </div>
         <div v-else-if="caracteristicaCarregada" class="flex items-center gap-2 text-green-700 text-xs bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-          <CheckCircle class="w-3.5 h-3.5" /> Justificativa e memria de clculo pr-preenchidas automaticamente.
+          <CheckCircle class="w-3.5 h-3.5" /> Justificativa e memória de cálculo pré-preenchidas automaticamente.
         </div>
 
-        <!-- Segundo beneficirio -->
+        <!-- Segundo beneficiário -->
         <div v-if="eFomentoJovem" class="bg-amber-50 border border-amber-300 rounded-xl p-5">
           <h3 class="text-sm font-semibold text-amber-700 mb-4 flex items-center gap-2">
-            <UserPlus class="w-4 h-4" /> Segundo Beneficirio
+            <UserPlus class="w-4 h-4" /> Segundo Beneficiário
           </h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="text-xs font-medium text-gray-600 mb-1 block">Nome Completo</label>
-              <input v-model="form.segundo_beneficiario_nome" placeholder="NOME DO BENEFICIRIO..." class="w-full px-3 py-2.5 border border-amber-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input v-model="form.segundo_beneficiario_nome" placeholder="NOME DO BENEFICIÁRIO..." class="w-full px-3 py-2.5 border border-amber-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </div>
             <div>
               <label class="text-xs font-medium text-gray-600 mb-1 block">CPF</label>
@@ -100,13 +100,13 @@
           </div>
         </div>
 
-        <!-- Entidade responsvel -->
+        <!-- Entidade responsável -->
         <div>
-          <label class="text-xs font-medium text-gray-600 mb-1 block">Entidade Responsvel pela Elaborao do Projeto</label>
+          <label class="text-xs font-medium text-gray-600 mb-1 block">Entidade Responsável pela Elaboração do Projeto</label>
           <input v-model="form.entidade_elaboracao" placeholder="EX: EMATER, SINDICATO RURAL, INCRA..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" />
         </div>
         <div class="mt-3 mb-5">
-          <textarea v-model="form.texto_entidade_responsavel" rows="3" placeholder="TEXTO ADICIONAL SOBRE A ENTIDADE RESPONSVEL..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600 resize-y" />
+          <textarea v-model="form.texto_entidade_responsavel" rows="3" placeholder="TEXTO ADICIONAL SOBRE A ENTIDADE RESPONSÁVEL..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600 resize-y" />
         </div>
 
         <!-- Justificativa -->
@@ -116,14 +116,14 @@
         </div>
 
         <!-- Tabela de investimentos -->
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Memria de Clculo - Investimentos</h3>
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Memória de Cálculo - Investimentos</h3>
         <div class="overflow-x-auto mb-4">
           <table class="w-full text-sm border-collapse">
             <thead>
               <tr class="bg-gray-50 text-gray-500 text-xs">
-                <th class="text-left px-3 py-2.5 border border-gray-200">Discriminao</th>
+                <th class="text-left px-3 py-2.5 border border-gray-200">Discriminação</th>
                 <th class="text-center px-3 py-2.5 border border-gray-200 w-20">Qtd</th>
-                <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Vlr Unitrio</th>
+                <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Vlr Unitário</th>
                 <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Subtotal</th>
                 <th class="w-10 border-none bg-transparent"></th>
               </tr>
@@ -158,15 +158,15 @@
           <Plus class="w-3.5 h-3.5" /> Adicionar item
         </button>
 
-        <!-- Tabela de mo de obra -->
-        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Mo de Obra Especializada</h3>
+        <!-- Tabela de mão de obra -->
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Mão de Obra Especializada</h3>
         <div class="overflow-x-auto mb-4">
           <table class="w-full text-sm border-collapse">
             <thead>
               <tr class="bg-gray-50 text-gray-500 text-xs">
-                <th class="text-left px-3 py-2.5 border border-gray-200">Descrio</th>
+                <th class="text-left px-3 py-2.5 border border-gray-200">Descrição</th>
                 <th class="text-center px-3 py-2.5 border border-gray-200 w-20">Qtd</th>
-                <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Vlr Unitrio</th>
+                <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Vlr Unitário</th>
                 <th class="text-center px-3 py-2.5 border border-gray-200 w-28">Subtotal</th>
                 <th class="w-10 border-none bg-transparent"></th>
               </tr>
@@ -201,11 +201,11 @@
           <Plus class="w-3.5 h-3.5" /> Adicionar item
         </button>
 
-        <!-- Municpio e Data -->
+        <!-- Município e Data -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <div>
-            <label class="text-xs font-medium text-gray-600 mb-1 block">Municpio</label>
-            <input v-model="form.municipio_data" placeholder="EX: CANA DOS CARAJS" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" />
+            <label class="text-xs font-medium text-gray-600 mb-1 block">Município</label>
+            <input v-model="form.municipio_data" placeholder="EX: CANAÃ DOS CARAJÁS" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary-600" />
           </div>
           <div>
             <label class="text-xs font-medium text-gray-600 mb-1 block">Data</label>
@@ -223,14 +223,14 @@
           <AlertCircle class="w-4 h-4" /> {{ erro }}
         </div>
         <div v-if="sucesso" class="flex items-center gap-2 text-green-700 text-xs bg-green-50 border border-green-200 rounded-lg px-4 py-2.5 mb-4">
-          <CheckCircle class="w-4 h-4" /> Formulrio salvo com sucesso!
+          <CheckCircle class="w-4 h-4" /> Formulário salvo com sucesso!
         </div>
 
         <!-- Salvar -->
         <button @click="salvar" :disabled="salvando" class="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl border-none cursor-pointer text-sm transition-colors">
           <Loader2 v-if="salvando" class="w-4 h-4 animate-spin" />
           <Save v-else class="w-4 h-4" />
-          {{ salvando ? 'Salvando...' : 'Salvar Formulrio' }}
+          {{ salvando ? 'Salvando...' : 'Salvar Formulário' }}
         </button>
       </div>
     </div>
@@ -273,7 +273,7 @@ const form = ref({
   justificativa: '',
   entidade_elaboracao: '',
   texto_entidade_responsavel: '',
-  municipio_data: 'CANA DOS CARAJS',
+  municipio_data: 'CANAÃ DOS CARAJÁS',
   data_assinatura: '',
   itens_investimento: [],
   itens_mao_obra: [],
@@ -346,7 +346,7 @@ watch(form.value.subclasse_id, async (subclasseId) => {
     caracteristicaCarregada.value = true
   } catch (e) {
     if (e?.response?.status !== 404) {
-      erro.value = e?.response?.data?.detail || 'Erro ao carregar caractersticas pr-definidas.'
+      erro.value = e?.response?.data?.detail || 'Erro ao carregar características pré-definidas.'
     }
     caracteristicaCarregada.value = false
   } finally {
@@ -373,11 +373,11 @@ function adicionarItem(tipo) {
 async function salvar() {
   erro.value = ''
   if (!form.value.classe_id || !form.value.subclasse_id) {
-    erro.value = 'Selecione a modalidade e a submodalidade do crdito.'
+    erro.value = 'Selecione a modalidade e a submodalidade do crédito.'
     return
   }
   if (eFomentoJovem.value && (!form.value.segundo_beneficiario_nome || !form.value.segundo_beneficiario_cpf)) {
-    erro.value = 'Preencha o nome e CPF do segundo beneficirio.'
+    erro.value = 'Preencha o nome e CPF do segundo beneficiário.'
     return
   }
 
@@ -405,7 +405,7 @@ async function salvar() {
       router.push('/produtores')
     }, 2000)
   } catch (e) {
-    erro.value = e?.response?.data?.detail || 'Erro ao salvar formulrio.'
+    erro.value = e?.response?.data?.erros?.[0]?.mensagem || e?.response?.data?.detail || 'Erro ao salvar formulário.'
   } finally {
     salvando.value = false
   }
@@ -423,14 +423,14 @@ async function emitirPDF() {
           <h1 style="color: #1a6b3c; margin: 0; font-size: 18px; text-transform: uppercase;">${fomento.value?.nome}</h1>
           <p style="color: #666; margin: 4px 0 0 0; font-size: 11px;">MODALIDADE: ${nomeModalidade}</p>
         </div>
-        <h2 style="color: #1a6b3c; font-size: 13px; margin-bottom: 8px; text-transform: uppercase;">Dados do Beneficirio</h2>
+        <h2 style="color: #1a6b3c; font-size: 13px; margin-bottom: 8px; text-transform: uppercase;">Dados do Beneficiário</h2>
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px;">
           <tr>
-            <td style="padding: 7px 10px; border: 1px solid #ccc; width: 50%;"><strong>BENEFICIRIO</strong> ${produtor.value?.nome_completo}</td>
+            <td style="padding: 7px 10px; border: 1px solid #ccc; width: 50%;"><strong>BENEFICIÁRIO</strong> ${produtor.value?.nome_completo}</td>
             <td style="padding: 7px 10px; border: 1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_beneficiario}</td>
           </tr>
           <tr>
-            <td style="padding: 7px 10px; border: 1px solid #ccc;"><strong>CNJUGE</strong> ${produtor.value?.conjuge_nome}</td>
+            <td style="padding: 7px 10px; border: 1px solid #ccc;"><strong>CÔNJUGE</strong> ${produtor.value?.conjuge_nome}</td>
             <td style="padding: 7px 10px; border: 1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_conjuge}</td>
           </tr>
           <tr>
@@ -438,13 +438,13 @@ async function emitirPDF() {
             <td style="padding: 7px 10px; border: 1px solid #ccc;"><strong>LOTE</strong> ${produtor.value?.lote}</td>
           </tr>
         </table>
-        <h2 style="color: #1a6b3c; font-size: 13px; margin-bottom: 8px; text-transform: uppercase;">Memria de Clculo - Investimentos</h2>
+        <h2 style="color: #1a6b3c; font-size: 13px; margin-bottom: 8px; text-transform: uppercase;">Memória de Cálculo - Investimentos</h2>
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px;">
           <thead>
             <tr style="background: #f0f0f0;">
-              <th style="padding: 7px 10px; border: 1px solid #ccc; text-align: left;">DISCRIMINAO</th>
+              <th style="padding: 7px 10px; border: 1px solid #ccc; text-align: left;">DISCRIMINAÇÃO</th>
               <th style="padding: 7px 10px; border: 1px solid #ccc; text-align: center; width: 60px;">QTD</th>
-              <th style="padding: 7px 10px; border: 1px solid #ccc; text-align: center; width: 110px;">VLR UNITRIO</th>
+              <th style="padding: 7px 10px; border: 1px solid #ccc; text-align: center; width: 110px;">VLR UNITÁRIO</th>
               <th style="padding: 7px 10px; border: 1px solid #ccc; text-align: center; width: 110px;">SUBTOTAL</th>
             </tr>
           </thead>
@@ -499,8 +499,8 @@ onMounted(async () => {
     if (dadosFormulario.data.municipio_data) form.value.municipio_data = dadosFormulario.data.municipio_data
     if (dadosFormulario.data.data_assinatura) form.value.data_assinatura = dadosFormulario.data.data_assinatura
   } catch (e) {
-    console.error('Erro ao carregar formulrio:', e)
-    erro.value = 'Erro ao carregar dados do formulrio.'
+    console.error('Erro ao carregar formulário:', e)
+    erro.value = 'Erro ao carregar dados do formulário.'
   }
 })
 </script>
