@@ -180,7 +180,8 @@ const form = ref({
 
 const subclassesDaClasse = computed(() => {
   if (!form.value.classe_id) return []
-  return hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.subclasses || []
+  const encontrado = hierarquia.value.find(h => h.classe.id === form.value.classe_id)
+  return encontrado?.subclasses || []
 })
 
 const eFomentoJovem = computed(() => {
@@ -224,7 +225,6 @@ watch(form.value.subclasse_id, async (subclasseId) => {
 
   carregandoCaracteristica.value = true
   try {
-    // Endpoint correto conforme backend: /fomentos/caracteristicas/{classe_id}/{subclasse_id}
     const { data } = await api.get(`/fomentos/caracteristicas/${form.value.classe_id}/${subclasseId}`)
     
     form.value.justificativa = data.justificativa || ''
