@@ -21,9 +21,9 @@
 
     <!-- Assentamentos -->
     <div class="max-w-5xl mx-auto px-6 py-16">
-      <h2 class="text-2xl font-bold text-primary-600 text-center mb-2">Assentamentos Cadastrados</h2>
+      <h2 class="text-2xl font-bold text-primary-600 text-center mb-2">Organizações de Produtores Rurais Cadastradas</h2>
       <p class="text-center text-gray-500 text-sm mb-10">
-        Acompanhe os dados dos assentamentos atendidos pela plataforma.
+        Acompanhe os dados das organizações de produtores rurais atendidas pela plataforma.
       </p>
 
       <!-- Estado de carregamento -->
@@ -31,12 +31,12 @@
         Carregando assentamentos...
       </div>
 
-      <!-- Nenhum assentamento cadastrado -->
+      <!-- Nenhuma organização de produtores rurais cadastrada -->
       <div v-else-if="assentamentos.length === 0" class="text-center text-gray-400 text-sm py-10">
         Nenhum produtor cadastrado no momento.
       </div>
 
-      <!-- Lista de assentamentos -->
+      <!-- Lista de organizações de produtores rurais -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div v-for="a in assentamentos" :key="a.nome"
           class="bg-white border border-gray-200 rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
@@ -60,7 +60,7 @@
         <h2 class="text-2xl font-bold text-primary-600 mb-4">Sobre o Sistema</h2>
         <p class="text-gray-500 leading-relaxed text-sm sm:text-base">
           Este sistema foi desenvolvido para facilitar o cadastro, consulta e gestão dos produtores rurais
-          beneficiários de programas de fomento nos assentamentos da região. Por meio da plataforma, é possível
+          beneficiários de programas de fomento nas organizações de produtores do Brasil. Por meio da plataforma, é possível
           acessar dados atualizados, gerar formulários e acompanhar o histórico de cada produtor.
         </p>
       </div>
@@ -130,7 +130,7 @@ async function carregarAssentamentos() {
     const { data } = await api.get('/produtores/assentamentos/resumo')
     assentamentos.value = data
   } catch (erro) {
-    console.error('Erro ao carregar assentamentos:', erro)
+    console.error('Erro ao carregar organizações de produtores rurais:', erro)
     assentamentos.value = []
   } finally {
     carregando.value = false
