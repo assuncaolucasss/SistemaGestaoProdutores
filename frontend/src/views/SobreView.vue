@@ -10,7 +10,7 @@
     </div>
 
     <p class="text-gray-500 mb-4">
-      O Sistema de Gestão de Assentamentos foi desenvolvido para facilitar o cadastro,
+      O Sistema de Gestão de Produtores Rurais foi desenvolvido para facilitar o cadastro,
       consulta e acompanhamento de produtores rurais beneficiários de programas de fomento
       nas organizações de produtores rurais do Brasil.
     </p>
