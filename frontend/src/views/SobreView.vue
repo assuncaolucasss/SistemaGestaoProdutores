@@ -12,7 +12,7 @@
     <p class="text-gray-500 mb-4">
       O Sistema de Gestão de Assentamentos foi desenvolvido para facilitar o cadastro,
       consulta e acompanhamento de produtores rurais beneficiários de programas de fomento
-      nos assentamentos do sul e sudeste do Pará.
+      nas organizações de produtores rurais do Brasil.
     </p>
     <p class="text-gray-500 mb-10">
       Por meio da plataforma, técnicos e gestores podem acessar dados atualizados de cada
