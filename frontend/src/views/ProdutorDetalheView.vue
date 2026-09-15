@@ -134,16 +134,6 @@
         </div>
       </div>
 
-      <hr class="border-gray-100 my-8" />
-
-      <!-- Rascunhos -->
-      <RascunhosProdutor
-        :produtor-id="produtorId"
-        :produtor="produtor"
-        :fomentos="fomentos"
-        :submissoes-iniciais="submissoes"
-      />
-
     </div>
 
     <div v-else class="flex items-center justify-center gap-2 text-gray-400 py-24">
@@ -159,7 +149,6 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '../services/api'
 import { useAuthStore } from '../stores/auth'
 import FieldEdit from '../components/FieldEdit.vue'
-import RascunhosProdutor from '../components/RascunhosProdutor.vue'
 import {
   ArrowLeft, User, Pencil, Save, X, Loader2,
   AlertCircle, CheckCircle, ClipboardList
@@ -174,7 +163,6 @@ const produtorId = route.params.id
 
 const produtor         = ref(null)
 const fomentos         = ref([])
-const submissoes       = ref([])
 const carregandoFomentos = ref(false)
 const editando         = ref(false)
 const salvando         = ref(false)
@@ -234,14 +222,6 @@ onMounted(async () => {
     console.error('Erro ao carregar fomentos:', err)
   } finally {
     carregandoFomentos.value = false
-  }
-
-  try {
-    const s = await api.get('/submissoes/', { params: { produtor_id: produtorId } })
-    submissoes.value = s.data
-  } catch (err) {
-    console.error('Erro ao carregar submissões:', err)
-    submissoes.value = []
   }
 })
 </script>
