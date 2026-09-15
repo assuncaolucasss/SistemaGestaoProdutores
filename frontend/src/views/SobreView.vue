@@ -24,7 +24,7 @@
 
     <!-- Assentamentos -->
     <h3 class="text-base font-semibold text-primary-600 uppercase tracking-widest mb-4">
-      Organizaç ´es de Produtores Rurais Atendidas
+      Organizações de Produtores Rurais Atendidas
     </h3>
     
     <div v-if="carregando" class="flex items-center justify-center gap-2 text-gray-400 py-8">
