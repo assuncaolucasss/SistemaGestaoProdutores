@@ -144,7 +144,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../services/api'
-import { html2canvas } from 'html2canvas'
+import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import { ArrowLeft, FileText, UserPlus, Plus, X, Loader2, AlertCircle, CheckCircle } from 'lucide-vue-next'
 
