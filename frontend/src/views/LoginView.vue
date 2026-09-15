@@ -10,9 +10,6 @@
           </div>
         </div>
         <h2 class="text-xl font-bold text-primary-600">Sistema de Gestão de Produtores</h2>
-        <p class="text-gray-500 text-sm mt-1">
-          Secretaria de Agricultura<br>Canaã dos Carajás
-        </p>
       </div>
 
       <!-- Email -->
