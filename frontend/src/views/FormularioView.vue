@@ -30,21 +30,29 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="text-xs font-medium text-gray-600 mb-1 block">Modalidade</label>
-            <select v-model="form.classe_id" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600">
+            <select
+              v-model.number="form.classe_id"
+              @change="aoSelecionarClasse"
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
+            >
               <option :value="null">Selecione...</option>
-              <option v-for="c in hierarquia" :key="c.classe?.id" :value="c.classe.id">{{ c.classe.nome }} ({{ c.classe.escopo.toUpperCase() }})</option>
+              <option v-for="item in hierarquia" :key="item.classe.id" :value="item.classe.id">
+                {{ item.classe.nome }} ({{ item.classe.escopo.toUpperCase() }})
+              </option>
             </select>
           </div>
           <div>
             <label class="text-xs font-medium text-gray-600 mb-1 block">Submodalidade</label>
-            <select 
-              v-model="form.subclasse_id" 
-              :disabled="!form.classe_id" 
-              @change="console.log('SELECT CHANGE:', $event.target.value, 'form.subclasse_id:', form.subclasse_id)"
+            <select
+              v-model.number="form.subclasse_id"
+              :disabled="!form.classe_id"
+              @change="carregarCaracteristicasPorCombinacao"
               class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 disabled:opacity-50"
             >
               <option :value="null">Selecione...</option>
-              <option v-for="si in subclassesDaClasse" :key="si.subclasse.id" :value="si.subclasse.id">{{ si.subclasse.nome }}</option>
+              <option v-for="item in subclassesDaClasse" :key="item.subclasse.id" :value="item.subclasse.id">
+                {{ item.subclasse.nome }}
+              </option>
             </select>
           </div>
         </div>
@@ -146,7 +154,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../services/api'
 import html2canvas from 'html2canvas'
@@ -165,7 +173,6 @@ const gerandoPDF = ref(false)
 const erro = ref('')
 const caracteristicaCarregada = ref(false)
 const carregandoCaracteristica = ref(false)
-let resetandoClasse = false
 
 const form = ref({
   numero_processo: '',
@@ -184,10 +191,8 @@ const form = ref({
 })
 
 const subclassesDaClasse = computed(() => {
-  console.log('🔍 computed subclassesDaClasse - classe_id:', form.value.classe_id)
   if (!form.value.classe_id) return []
   const encontrado = hierarquia.value.find(h => h.classe.id === form.value.classe_id)
-  console.log('🔍 encontrado:', encontrado)
   return encontrado?.subclasses || []
 })
 
@@ -211,75 +216,90 @@ function limparCamposCaracteristica() {
   caracteristicaCarregada.value = false
 }
 
-watch(form.value.classe_id, (novaClasse) => {
-  console.log('🔔 WATCH classe_id disparado:', novaClasse)
-  resetandoClasse = true
+function aoSelecionarClasse() {
   form.value.subclasse_id = null
   limparCamposCaracteristica()
-  if (novaClasse) {
-    const classe = hierarquia.value.find(h => h.classe.id === novaClasse)?.classe
-    form.value.modalidade = classe?.nome?.toUpperCase() || ''
-  } else {
-    form.value.modalidade = ''
-  }
-  setTimeout(() => { resetandoClasse = false }, 0)
-})
 
-watch([() => form.value.subclasse_id, () => form.value.classe_id], async ([nova, novaClasse], [antiga, antigaClasse]) => {
-  console.log('🔔 WATCH [subclasse_id, classe_id] disparado!')
-  console.log('Antigo:', { subclasse: antiga, classe: antigaClasse })
-  console.log('Novo:', { subclasse: nova, classe: novaClasse })
-  
-  if (!nova || !novaClasse) {
-    console.log('⚠️ subclasse_id ou classe_id é nulo')
+  const classe = hierarquia.value.find(
+    item => item.classe.id === Number(form.value.classe_id)
+  )?.classe
+
+  form.value.modalidade = classe?.nome?.toUpperCase() || ''
+}
+
+async function carregarCaracteristicasPorCombinacao() {
+  const classeId = Number(form.value.classe_id)
+  const subclasseId = Number(form.value.subclasse_id)
+
+  console.log('[CARACTERISTICAS] classe_id:', classeId)
+  console.log('[CARACTERISTICAS] subclasse_id:', subclasseId)
+
+  if (!classeId || !subclasseId) {
+    console.log('[CARACTERISTICAS] combinação incompleta')
+    limparCamposCaracteristica()
     return
   }
-  
-  if (resetandoClasse) {
-    console.log('⚠️ Ignorando - está resetando')
-    return
-  }
-  
+
   limparCamposCaracteristica()
   erro.value = ''
-
-  console.log('✅ Iniciando requisição...')
-  console.log('URL:', `/fomentos/caracteristicas/${novaClasse}/${nova}`)
-  
   carregandoCaracteristica.value = true
+
   try {
-    const { data } = await api.get(`/fomentos/caracteristicas/${novaClasse}/${nova}`)
-    console.log('✅ Resposta:', data)
-    
+    const url = `/fomentos/caracteristicas/${classeId}/${subclasseId}`
+
+    console.log('[CARACTERISTICAS] chamando:', url)
+
+    const { data } = await api.get(url)
+
+    console.log('[CARACTERISTICAS] resposta:', data)
+
     form.value.justificativa = data.justificativa || ''
     form.value.entidade_elaboracao = data.entidade_elaboracao || ''
     form.value.texto_entidade_responsavel = data.texto_entidade_responsavel || ''
-    form.value.itens_investimento = (data.memoria_calculo || []).map(i => ({
-      discriminacao: i.discriminacao || '',
-      quantidade: Number(i.quantidade ?? 0),
-      valor_unitario: Number(i.valor_unitario ?? 0),
-      subtotal: Number(i.subtotal ?? ((i.quantidade ?? 0) * (i.valor_unitario ?? 0))),
-    }))
-    form.value.itens_mao_obra = (data.mao_obra_especializada || []).map(i => ({
-      descricao: i.descricao || '',
-      visitas: Number(i.visitas ?? i.qtd ?? 0),
-      valor_unitario: Number(i.valor_unitario ?? 0),
-      subtotal: Number(i.subtotal ?? ((i.visitas ?? i.qtd ?? 0) * (i.valor_unitario ?? 0))),
-    }))
+
+    form.value.itens_investimento = Array.isArray(data.memoria_calculo)
+      ? data.memoria_calculo.map(item => ({
+          discriminacao: item.discriminacao || '',
+          quantidade: Number(item.quantidade || 0),
+          valor_unitario: Number(item.valor_unitario || 0),
+          subtotal: Number(
+            item.subtotal ??
+            ((item.quantidade || 0) * (item.valor_unitario || 0))
+          ),
+        }))
+      : []
+
+    form.value.itens_mao_obra = Array.isArray(data.mao_obra_especializada)
+      ? data.mao_obra_especializada.map(item => ({
+          descricao: item.descricao || '',
+          visitas: Number(item.visitas ?? item.qtd ?? 0),
+          valor_unitario: Number(item.valor_unitario || 0),
+          subtotal: Number(
+            item.subtotal ??
+            ((item.visitas ?? item.qtd ?? 0) * (item.valor_unitario || 0))
+          ),
+        }))
+      : []
+
     caracteristicaCarregada.value = true
-  } catch (e) {
-    console.log('❌ Erro:', e)
-    console.log('Status:', e?.response?.status)
-    console.log('Resposta:', e?.response?.data)
-    
-    if (e?.response?.status !== 404) {
-      erro.value = e?.response?.data?.detail || 'Erro ao carregar características.'
-    }
+  } catch (err) {
+    console.error('[CARACTERISTICAS] erro:', err)
+    console.error('[CARACTERISTICAS] status:', err?.response?.status)
+    console.error('[CARACTERISTICAS] resposta:', err?.response?.data)
+
     caracteristicaCarregada.value = false
+
+    if (err?.response?.status === 404) {
+      erro.value = 'Não existem características cadastradas para esta combinação.'
+    } else {
+      erro.value =
+        err?.response?.data?.detail ||
+        'Erro ao carregar características pré-definidas.'
+    }
   } finally {
     carregandoCaracteristica.value = false
   }
-}, { immediate: false })
+}
 
 function calcularSubtotal(item) {
   item.subtotal = (item.quantidade || 0) * (item.valor_unitario || 0)
@@ -328,26 +348,21 @@ async function emitirPDF() {
 }
 
 onMounted(async () => {
-  console.log('🔔 onMounted - iniciando')
   try {
     const [dadosFormulario, hierarquiaResp] = await Promise.all([
       api.get(`/formulario/${produtorId}/${fomentoId}`),
       api.get(`/fomentos/${fomentoId}/hierarquia`),
     ])
-    console.log('📦 hierarquiaResp.data:', hierarquiaResp.data)
-    console.log('📦 hierarquiaResp.data.hierarquia:', hierarquiaResp.data.hierarquia)
     
     produtor.value = dadosFormulario.data.produtor
     fomento.value = dadosFormulario.data.fomento
     hierarquia.value = hierarquiaResp.data.hierarquia || []
     
-    console.log('📦 hierarquia.value depois:', hierarquia.value)
-    
     if (dadosFormulario.data.numero_processo) form.value.numero_processo = dadosFormulario.data.numero_processo
     if (dadosFormulario.data.municipio_data) form.value.municipio_data = dadosFormulario.data.municipio_data
     if (dadosFormulario.data.data_assinatura) form.value.data_assinatura = dadosFormulario.data.data_assinatura
   } catch (e) {
-    console.error('❌ Erro ao carregar:', e)
+    console.error('Erro ao carregar:', e)
     erro.value = 'Erro ao carregar dados.'
   }
 })
