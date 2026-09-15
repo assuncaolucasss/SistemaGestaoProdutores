@@ -10,7 +10,7 @@ from app.schemas.produtor import ProdutorRead, ProdutorUpdate
 from app.core.security import get_current_user, requer_superusuario
 from app.models.usuario import Usuario
 
-router = APIRouter(prefix="/produtores", tags=["Produtores"])
+router = APIRouter(tags=["Produtores"])
 
 
 def _normalizar(texto: str) -> str:
@@ -37,7 +37,7 @@ def _aplicar_filtros(query, busca: Optional[str], assentamento: Optional[str]):
     return query
 
 
-@router.get("/total", response_model=int)
+@router.get("/produtores/total", response_model=int)
 def total_produtores(
     busca: Optional[str] = Query(None),
     assentamento: Optional[str] = Query(None),
@@ -48,7 +48,7 @@ def total_produtores(
     return session.exec(query).one()
 
 
-@router.get("/assentamentos/resumo")
+@router.get("/produtores/assentamentos/resumo")
 def resumo_assentamentos(
     session: Session = Depends(get_session),
     _: Usuario = Depends(get_current_user)
@@ -67,7 +67,7 @@ def resumo_assentamentos(
     ]
 
 
-@router.get("/", response_model=List[ProdutorRead])
+@router.get("/produtores/", response_model=List[ProdutorRead])
 def listar_produtores(
     busca: Optional[str] = Query(None),
     assentamento: Optional[str] = Query(None),
@@ -81,7 +81,7 @@ def listar_produtores(
     return session.exec(query).all()
 
 
-@router.get("/{id}", response_model=ProdutorRead)
+@router.get("/produtores/{id}", response_model=ProdutorRead)
 def detalhe_produtor(
     id: int,
     session: Session = Depends(get_session),
@@ -93,7 +93,7 @@ def detalhe_produtor(
     return produtor
 
 
-@router.post("/", response_model=ProdutorRead)
+@router.post("/produtores/", response_model=ProdutorRead)
 def criar_produtor(
     dados: ProdutorUpdate,
     session: Session = Depends(get_session),
@@ -106,7 +106,7 @@ def criar_produtor(
     return produtor
 
 
-@router.patch("/{id}", response_model=ProdutorRead)
+@router.patch("/produtores/{id}", response_model=ProdutorRead)
 def atualizar_produtor(
     id: int,
     dados: ProdutorUpdate,
@@ -129,7 +129,7 @@ def atualizar_produtor(
     return produtor
 
 
-@router.delete("/{id}", status_code=204)
+@router.delete("/produtores/{id}", status_code=204)
 def remover_produtor(
     id: int,
     session: Session = Depends(get_session),
