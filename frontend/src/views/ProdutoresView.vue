@@ -19,7 +19,7 @@
       </div>
       <select v-model="assentamentoFiltro" @change="onFiltro"
   class="py-2.5 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent uppercase">
-  <option value="">Todos os assentamentos</option>
+  <option value="">Todos as organizações de produtores rurais</option>
   <option value="PA BRASÍLIA">PA BRASÍLIA</option>
   <option value="PA MARIA DE LOURDES RODRIGUES">PA MARIA DE LOURDES RODRIGUES</option>
   <option value="PA MONTEPÍO">PA MONTEPÍO</option>
