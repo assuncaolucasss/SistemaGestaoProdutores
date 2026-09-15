@@ -37,7 +37,12 @@
           </div>
           <div>
             <label class="text-xs font-medium text-gray-600 mb-1 block">Submodalidade</label>
-            <select v-model="form.subclasse_id" :disabled="!form.classe_id" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 disabled:opacity-50">
+            <select 
+              v-model="form.subclasse_id" 
+              :disabled="!form.classe_id" 
+              @change="console.log('SELECT CHANGE:', $event.target.value)"
+              class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 disabled:opacity-50"
+            >
               <option :value="null">Selecione...</option>
               <option v-for="si in subclassesDaClasse" :key="si.subclasse.id" :value="si.subclasse.id">{{ si.subclasse.nome }}</option>
             </select>
