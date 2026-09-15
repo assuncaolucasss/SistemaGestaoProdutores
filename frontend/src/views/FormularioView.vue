@@ -132,9 +132,6 @@
 
         <div v-if="erro" class="flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 mb-4"><AlertCircle class="w-4 h-4" /> {{ erro }}</div>
 
-        <button @click="emitirPDF" :disabled="gerandoPDF" class="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl border-none cursor-pointer text-sm">
-          <Loader2 v-if="gerandoPDF" class="w-4 h-4 animate-spin" /><FileText v-else class="w-4 h-4" /> {{ gerandoPDF ? 'Gerando...' : 'Emitir PDF' }}
-        </button>
       </div>
     </div>
 
