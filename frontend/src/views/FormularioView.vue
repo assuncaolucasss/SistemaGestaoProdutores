@@ -32,7 +32,7 @@
             <label class="text-xs font-medium text-gray-600 mb-1 block">Modalidade</label>
             <select v-model="form.classe_id" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600">
               <option :value="null">Selecione...</option>
-              <option v-for="c in hierarquia" :key="c.classe.id" :value="c.classe.id">{{ c.classe.nome }} ({{ c.classe.escopo.toUpperCase() }})</option>
+              <option v-for="c in hierarquia" :key="c.classe?.id || c.id" :value="c.classe?.id || c.id">{{ c.classe?.nome || c.nome }} ({{ (c.classe?.escopo || c.escopo || '').toUpperCase() }})</option>
             </select>
           </div>
           <div>
@@ -40,11 +40,11 @@
             <select 
               v-model="form.subclasse_id" 
               :disabled="!form.classe_id" 
-              @change="console.log('SELECT CHANGE:', $event.target.value)"
+              @change="console.log('SELECT CHANGE:', $event.target.value, 'form.subclasse_id:', form.subclasse_id)"
               class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 disabled:opacity-50"
             >
               <option :value="null">Selecione...</option>
-              <option v-for="si in subclassesDaClasse" :key="si.subclasse.id" :value="si.subclasse.id">{{ si.subclasse.nome }}</option>
+              <option v-for="si in subclassesDaClasse" :key="si.subclasse?.id || si.id" :value="si.subclasse?.id || si.id">{{ si.subclasse?.nome || si.nome }}</option>
             </select>
           </div>
         </div>
@@ -184,8 +184,10 @@ const form = ref({
 })
 
 const subclassesDaClasse = computed(() => {
+  console.log('🔍 computed subclassesDaClasse - classe_id:', form.value.classe_id)
   if (!form.value.classe_id) return []
-  const encontrado = hierarquia.value.find(h => h.classe.id === form.value.classe_id)
+  const encontrado = hierarquia.value.find(h => (h.classe?.id || h.id) === form.value.classe_id)
+  console.log('🔍 encontrado:', encontrado)
   return encontrado?.subclasses || []
 })
 
@@ -340,11 +342,11 @@ onMounted(async () => {
       api.get(`/fomentos/${fomentoId}/hierarquia`),
     ])
     console.log('📦 hierarquiaResp.data:', hierarquiaResp.data)
-    console.log('📦 hierarquia.value antes:', hierarquia.value)
+    console.log('📦 hierarquiaResp.data.hierarquia:', hierarquiaResp.data.hierarquia)
     
     produtor.value = dadosFormulario.data.produtor
     fomento.value = dadosFormulario.data.fomento
-    hierarquia.value = hierarquiaResp.data.hierarquia
+    hierarquia.value = hierarquiaResp.data.hierarquia || []
     
     console.log('📦 hierarquia.value depois:', hierarquia.value)
     
