@@ -131,10 +131,9 @@
         </div>
 
         <div v-if="erro" class="flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 mb-4"><AlertCircle class="w-4 h-4" /> {{ erro }}</div>
-        <div v-if="sucesso" class="flex items-center gap-2 text-green-700 text-xs bg-green-50 border border-green-200 rounded-lg px-4 py-2.5 mb-4"><CheckCircle class="w-4 h-4" /> Salvo com sucesso!</div>
 
-        <button @click="salvar" :disabled="salvando" class="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl border-none cursor-pointer text-sm">
-          <Loader2 v-if="salvando" class="w-4 h-4 animate-spin" /><Save v-else class="w-4 h-4" /> {{ salvando ? 'Salvando...' : 'Salvar Formulário' }}
+        <button @click="emitirPDF" :disabled="gerandoPDF" class="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl border-none cursor-pointer text-sm">
+          <Loader2 v-if="gerandoPDF" class="w-4 h-4 animate-spin" /><FileText v-else class="w-4 h-4" /> {{ gerandoPDF ? 'Gerando...' : 'Emitir PDF' }}
         </button>
       </div>
     </div>
@@ -149,7 +148,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '../services/api'
 import { html2canvas } from 'html2canvas'
 import { jsPDF } from 'jspdf'
-import { ArrowLeft, FileText, UserPlus, Plus, X, Save, Loader2, AlertCircle, CheckCircle } from 'lucide-vue-next'
+import { ArrowLeft, FileText, UserPlus, Plus, X, Loader2, AlertCircle, CheckCircle } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -159,10 +158,8 @@ const fomentoId = route.params.fomentoId
 const produtor = ref(null)
 const fomento = ref(null)
 const hierarquia = ref([])
-const salvando = ref(false)
 const gerandoPDF = ref(false)
 const erro = ref('')
-const sucesso = ref(false)
 const caracteristicaCarregada = ref(false)
 const carregandoCaracteristica = ref(false)
 let resetandoClasse = false
@@ -269,59 +266,6 @@ function adicionarItem(tipo) {
     form.value.itens_investimento.push({ discriminacao: '', quantidade: 0, valor_unitario: 0, subtotal: 0 })
   } else {
     form.value.itens_mao_obra.push({ descricao: '', visitas: 0, valor_unitario: 0, subtotal: 0 })
-  }
-}
-
-async function salvar() {
-  erro.value = ''
-  if (!form.value.classe_id || !form.value.subclasse_id) {
-    erro.value = 'Selecione a modalidade e a submodalidade.'
-    return
-  }
-  if (eFomentoJovem.value && (!form.value.segundo_beneficiario_nome || !form.value.segundo_beneficiario_cpf)) {
-    erro.value = 'Preencha o segundo beneficiário.'
-    return
-  }
-
-  salvando.value = true
-  try {
-    const payload = {
-      fomento_id: parseInt(fomentoId),
-      produtor_id: parseInt(produtorId),
-      numero_processo: form.value.numero_processo || null,
-      modalidade: form.value.modalidade || null,
-      classe_id: form.value.classe_id,
-      subclasse_id: form.value.subclasse_id,
-      justificativa: form.value.justificativa || null,
-      entidade_elaboracao: form.value.entidade_elaboracao || null,
-      texto_entidade_responsavel: form.value.texto_entidade_responsavel || null,
-      segundo_beneficiario_nome: form.value.segundo_beneficiario_nome || null,
-      segundo_beneficiario_cpf: form.value.segundo_beneficiario_cpf || null,
-      municipio_data: form.value.municipio_data || null,
-      data_assinatura: form.value.data_assinatura || null,
-      itens_investimento: form.value.itens_investimento.length > 0 ? form.value.itens_investimento.map(i => ({
-        discriminacao: i.discriminacao || '',
-        quantidade: Number(i.quantidade ?? 0),
-        valor_unitario: Number(i.valor_unitario ?? 0),
-        subtotal: Number(i.subtotal ?? 0),
-      })) : null,
-      itens_mao_obra: form.value.itens_mao_obra.length > 0 ? form.value.itens_mao_obra.map(i => ({
-        descricao: i.descricao || '',
-        visitas: Number(i.visitas ?? 0),
-        valor_unitario: Number(i.valor_unitario ?? 0),
-        subtotal: Number(i.subtotal ?? 0),
-      })) : null,
-    }
-
-    console.log('Payload enviado:', payload)
-    await api.post('/submissoes', payload)
-    sucesso.value = true
-    setTimeout(() => router.push('/produtores'), 2000)
-  } catch (e) {
-    console.error('Erro ao salvar:', e)
-    erro.value = e?.response?.data?.erros?.[0]?.mensagem || e?.response?.data?.detail || 'Erro ao salvar.'
-  } finally {
-    salvando.value = false
   }
 }
 
