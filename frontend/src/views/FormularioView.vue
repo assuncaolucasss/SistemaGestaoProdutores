@@ -10,11 +10,6 @@
           <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">{{ produtor.codigo_beneficiario }} | Produtor ID: {{ produtorId }}</p>
           <h2 class="text-xl font-bold text-primary-600 uppercase">{{ fomento.nome }}</h2>
         </div>
-        <button @click="emitirPDF" :disabled="gerandoPDF" class="flex items-center gap-2 bg-primary-50 hover:bg-primary-100 border border-primary-600 text-primary-600 text-sm font-semibold px-4 py-2 rounded-lg cursor-pointer disabled:opacity-60 transition-colors">
-          <Loader2 v-if="gerandoPDF" class="w-4 h-4 animate-spin" />
-          <FileText v-else class="w-4 h-4" />
-          {{ gerandoPDF ? 'Gerando...' : 'Emitir PDF' }}
-        </button>
       </div>
 
       <hr class="border-gray-100 mb-6" />
@@ -132,6 +127,12 @@
 
         <div v-if="erro" class="flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 mb-4"><AlertCircle class="w-4 h-4" /> {{ erro }}</div>
 
+        <button @click="emitirPDF" :disabled="gerandoPDF" class="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl border-none cursor-pointer text-sm transition-colors">
+          <Loader2 v-if="gerandoPDF" class="w-4 h-4 animate-spin" />
+          <FileText v-else class="w-4 h-4" /> 
+          {{ gerandoPDF ? 'Gerando PDF...' : 'Emitir PDF' }}
+        </button>
+
       </div>
     </div>
 
@@ -182,7 +183,6 @@ const subclassesDaClasse = computed(() => {
   return hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.subclasses || []
 })
 
-// Correção dos parênteses aplicados aqui:
 const eFomentoJovem = computed(() => {
   const nome = hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome ?? ''
   return nome.toLowerCase().includes('jovem') || (form.value.modalidade?.toLowerCase().includes('jovem') ?? false)
