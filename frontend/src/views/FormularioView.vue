@@ -497,15 +497,31 @@ async function emitirPDF() {
       </div>`
 
     const container = document.createElement('div')
-    container.style.cssText = 'position:absolute;top:0;left:0;width:794px;background:#fff;z-index:-1;visibility:hidden;'
+    container.setAttribute('id', 'pdf-render-container')
+    container.style.position = 'fixed'
+    container.style.top = '0'
+    container.style.left = '0'
+    container.style.width = '794px'
+    container.style.backgroundColor = '#ffffff'
+    container.style.zIndex = '-9999'
+    container.style.opacity = '0'
+    container.style.pointerEvents = 'none'
     container.innerHTML = html
     document.body.appendChild(container)
 
-    void container.offsetHeight
-    await new Promise(r => setTimeout(r, 500))
+    await new Promise(resolve => {
+      if (document.readyState === 'complete') {
+        requestAnimationFrame(() => requestAnimationFrame(resolve))
+      } else {
+        window.addEventListener('load', () => {
+          requestAnimationFrame(() => requestAnimationFrame(resolve))
+        }, { once: true })
+      }
+    })
 
-    const alturaReal = container.scrollHeight
-    container.style.height = `${alturaReal}px`
+    await new Promise(r => setTimeout(r, 400))
+
+    const alturaReal = Math.max(container.scrollHeight, container.offsetHeight)
 
     const canvas = await html2canvas(container, {
       scale: 2,
@@ -513,11 +529,16 @@ async function emitirPDF() {
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
+      x: 0,
+      y: 0,
+      scrollX: 0,
+      scrollY: 0,
       width: 794,
       height: alturaReal,
       windowWidth: 794,
       windowHeight: alturaReal,
     })
+
     document.body.removeChild(container)
 
     const imgData = canvas.toDataURL('image/png')
