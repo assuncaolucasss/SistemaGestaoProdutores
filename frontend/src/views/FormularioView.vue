@@ -317,7 +317,7 @@ function gerarLinhasInvestimento() {
   }
   return form.value.itens_investimento.map(item => `
     <tr>
-      <td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${(item.discriminacao || '').toUpperCase()}</td>
+      <td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${(item.discriminacao || '').toString().toUpperCase()}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">${item.quantidade}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">R$ ${Number(item.valor_unitario).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;font-weight:bold;">R$ ${Number(item.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
@@ -330,7 +330,7 @@ function gerarLinhasMaoObra() {
   }
   return form.value.itens_mao_obra.map(item => `
     <tr>
-      <td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${(item.descricao || '').toUpperCase()}</td>
+      <td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${(item.descricao || '').toString().toUpperCase()}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">${item.visitas}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">R$ ${Number(item.valor_unitario).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;font-weight:bold;">R$ ${Number(item.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
@@ -341,19 +341,19 @@ function gerarDadosSegundoBeneficiarioPDF() {
   if (!eFomentoJovem.value || !form.value.segundo_beneficiario_nome) return ''
   return `
     <tr>
-      <td style="padding:7px 10px;border:1px solid #ccc;"><strong>BENEFICIÁRIO</strong> ${(form.value.segundo_beneficiario_nome || '').toUpperCase()}</td>
-      <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${form.value.segundo_beneficiario_cpf || ''}</td>
+      <td style="padding:7px 10px;border:1px solid #ccc;"><strong>BENEFICIÁRIO</strong> ${(form.value.segundo_beneficiario_nome || '').toString().toUpperCase()}</td>
+      <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${(form.value.segundo_beneficiario_cpf || '').toString().toUpperCase()}</td>
     </tr>`
 }
 
 function gerarEntidadeResponsavelPDF() {
   const textoExtra = form.value.texto_entidade_responsavel
-    ? `<p style="font-size:11px;line-height:1.7;white-space:pre-wrap;margin-top:6px;text-transform:uppercase;">${(form.value.texto_entidade_responsavel || '').toUpperCase()}</p>`
+    ? `<p style="font-size:11px;line-height:1.7;white-space:pre-wrap;margin-top:6px;text-transform:uppercase;">${(form.value.texto_entidade_responsavel || '').toString().toUpperCase()}</p>`
     : ''
   return `
     <div style="margin-bottom:20px;">
       <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:6px;text-transform:uppercase;">ENTIDADE RESPONSÁVEL PELA ELABORAÇÃO/EXECUÇÃO/ACOMPANHAMENTO DESTE PROJETO</h2>
-      <p style="font-size:13px;font-weight:bold;text-transform:uppercase;margin:0 0 4px 0;">${(form.value.entidade_elaboracao || '').toUpperCase()}</p>
+      <p style="font-size:13px;font-weight:bold;text-transform:uppercase;margin:0 0 4px 0;">${(form.value.entidade_elaboracao || '').toString().toUpperCase()}</p>
       ${textoExtra}
     </div>`
 }
@@ -363,16 +363,18 @@ function gerarJustificativa() {
   return `
     <div style="margin-bottom:20px;">
       <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">JUSTIFICATIVA DO PROJETO PRODUTIVO</h2>
-      <p style="font-size:11px;line-height:1.7;white-space:pre-wrap;padding:10px;border:1px solid #ccc;border-radius:4px;text-transform:uppercase;">${(form.value.justificativa || '').toUpperCase()}</p>
+      <p style="font-size:11px;line-height:1.7;white-space:pre-wrap;padding:10px;border:1px solid #ccc;border-radius:4px;text-transform:uppercase;">${(form.value.justificativa || '').toString().toUpperCase()}</p>
     </div>`
 }
 
 function gerarAssinaturasNormal() {
+  const conjugeNomeAssinatura = (produtor.value?.conjuge_nome || '').toString().toUpperCase()
+  const cpfConjugeAssinatura = (produtor.value?.cpf_conjuge || '').toString().toUpperCase()
   const conjuge = produtor.value?.conjuge_nome
     ? `<div style="text-align:center;width:40%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${(produtor.value.conjuge_nome || '').toUpperCase()}</strong><br>
-          <span style="color:#555;">CÔNJUGE - CPF: ${produtor.value.cpf_conjuge || ''}</span>
+          <strong>${conjugeNomeAssinatura}</strong><br>
+          <span style="color:#555;">CÔNJUGE - CPF: ${cpfConjugeAssinatura}</span>
         </div>
       </div>`
     : ''
@@ -380,8 +382,8 @@ function gerarAssinaturasNormal() {
     <div style="display:flex;justify-content:center;gap:60px;margin-bottom:40px;">
       <div style="text-align:center;width:40%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${(produtor.value?.nome_completo || '').toUpperCase()}</strong><br>
-          <span style="color:#555;">BENEFICIÁRIO - CPF: ${produtor.value?.cpf_beneficiario || ''}</span>
+          <strong>${(produtor.value?.nome_completo || '').toString().toUpperCase()}</strong><br>
+          <span style="color:#555;">BENEFICIÁRIO - CPF: ${(produtor.value?.cpf_beneficiario || '').toString().toUpperCase()}</span>
         </div>
       </div>
       ${conjuge}
@@ -394,20 +396,20 @@ function gerarAssinaturasJovem() {
     <div style="display:flex;justify-content:center;gap:40px;margin-bottom:40px;flex-wrap:wrap;">
       <div style="text-align:center;width:28%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${(produtor.value?.nome_completo || '').toUpperCase()}</strong><br>
-          <span style="color:#555;">BENEFICIÁRIO - CPF: ${produtor.value?.cpf_beneficiario || ''}</span>
+          <strong>${(produtor.value?.nome_completo || '').toString().toUpperCase()}</strong><br>
+          <span style="color:#555;">BENEFICIÁRIO - CPF: ${(produtor.value?.cpf_beneficiario || '').toString().toUpperCase()}</span>
         </div>
       </div>
       <div style="text-align:center;width:28%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${(produtor.value?.conjuge_nome || '').toUpperCase()}</strong><br>
-          <span style="color:#555;">CÔNJUGE - CPF: ${produtor.value?.cpf_conjuge || ''}</span>
+          <strong>${(produtor.value?.conjuge_nome || '').toString().toUpperCase()}</strong><br>
+          <span style="color:#555;">CÔNJUGE - CPF: ${(produtor.value?.cpf_conjuge || '').toString().toUpperCase()}</span>
         </div>
       </div>
       <div style="text-align:center;width:28%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${(form.value.segundo_beneficiario_nome || '').toUpperCase()}</strong><br>
-          <span style="color:#555;">BENEFICIÁRIO - CPF: ${form.value.segundo_beneficiario_cpf || ''}</span>
+          <strong>${(form.value.segundo_beneficiario_nome || '').toString().toUpperCase()}</strong><br>
+          <span style="color:#555;">BENEFICIÁRIO - CPF: ${(form.value.segundo_beneficiario_cpf || '').toString().toUpperCase()}</span>
         </div>
       </div>
     </div>`
@@ -420,14 +422,17 @@ async function emitirPDF() {
   let wrapper = null
 
   try {
-    const nomeModalidade = (form.value.modalidade || hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome || '').toUpperCase()
-    const nomeBeneficiario = (produtor.value?.nome_completo || '').toUpperCase()
-    const codigoBeneficiario = (produtor.value?.codigo_beneficiario || '').toUpperCase()
-    const nomeFomento = (fomento.value?.nome || '').toUpperCase()
-    const conjugeNome = (produtor.value?.conjuge_nome || '').toUpperCase()
-    const assentamento = (produtor.value?.assentamento || '').toUpperCase()
-    const lote = (produtor.value?.lote || '').toUpperCase()
-    const municipioData = (form.value.municipio_data || '').toUpperCase()
+    const nomeModalidade = (form.value.modalidade || hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome || '').toString().toUpperCase()
+    const nomeBeneficiario = (produtor.value?.nome_completo || '').toString().toUpperCase()
+    const codigoBeneficiario = (produtor.value?.codigo_beneficiario || '').toString().toUpperCase()
+    const nomeFomento = (fomento.value?.nome || '').toString().toUpperCase()
+    const conjugeNome = (produtor.value?.conjuge_nome || '').toString().toUpperCase()
+    const assentamento = (produtor.value?.assentamento || '').toString().toUpperCase()
+    const lote = (produtor.value?.lote || '').toString().toUpperCase()
+    const cpfBeneficiario = (produtor.value?.cpf_beneficiario || '').toString().toUpperCase()
+    const cpfConjuge = (produtor.value?.cpf_conjuge || '').toString().toUpperCase()
+    const municipioData = (form.value.municipio_data || '').toString().toUpperCase()
+    const entidadeElaboracao = (form.value.entidade_elaboracao || '').toString().toUpperCase()
     const assinaturas = eFomentoJovem.value ? gerarAssinaturasJovem() : gerarAssinaturasNormal()
 
     const html = `
@@ -442,11 +447,11 @@ async function emitirPDF() {
         <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;">
           <tr>
             <td style="padding:7px 10px;border:1px solid #ccc;width:50%;"><strong>BENEFICIÁRIO</strong> ${nomeBeneficiario}</td>
-            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_beneficiario || ''}</td>
+            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${cpfBeneficiario}</td>
           </tr>
           <tr>
             <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CÔNJUGE</strong> ${conjugeNome}</td>
-            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_conjuge || ''}</td>
+            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${cpfConjuge}</td>
           </tr>
           <tr>
             <td style="padding:7px 10px;border:1px solid #ccc;"><strong>ASSENTAMENTO</strong> ${assentamento}</td>
@@ -499,7 +504,7 @@ async function emitirPDF() {
           <div style="text-align:center;width:55%;">
             <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
               <strong>RESPONSÁVEL TÉCNICO</strong><br>
-              <span style="color:#555;text-transform:uppercase;">${(form.value.entidade_elaboracao || '').toUpperCase()}</span>
+              <span style="color:#555;text-transform:uppercase;">${entidadeElaboracao}</span>
             </div>
           </div>
         </div>
