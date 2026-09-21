@@ -416,6 +416,10 @@ function gerarAssinaturasJovem() {
 async function emitirPDF() {
   if (gerandoPDF.value) return
   gerandoPDF.value = true
+
+  let container = null
+  let overlay = null
+
   try {
     const nomeModalidade = form.value.modalidade || hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome || ''
     const nomeBeneficiario = (produtor.value?.nome_completo || '').toUpperCase()
@@ -496,30 +500,28 @@ async function emitirPDF() {
         </div>
       </div>`
 
-    const container = document.createElement('div')
-    container.setAttribute('id', 'pdf-render-container')
+    overlay = document.createElement('div')
+    overlay.style.position = 'fixed'
+    overlay.style.top = '0'
+    overlay.style.left = '0'
+    overlay.style.width = '100vw'
+    overlay.style.height = '100vh'
+    overlay.style.backgroundColor = '#ffffff'
+    overlay.style.zIndex = '99998'
+    document.body.appendChild(overlay)
+
+    container = document.createElement('div')
     container.style.position = 'fixed'
     container.style.top = '0'
     container.style.left = '0'
     container.style.width = '794px'
     container.style.backgroundColor = '#ffffff'
-    container.style.zIndex = '-9999'
-    container.style.opacity = '0'
-    container.style.pointerEvents = 'none'
+    container.style.zIndex = '99999'
+    container.style.margin = '0'
     container.innerHTML = html
     document.body.appendChild(container)
 
-    await new Promise(resolve => {
-      if (document.readyState === 'complete') {
-        requestAnimationFrame(() => requestAnimationFrame(resolve))
-      } else {
-        window.addEventListener('load', () => {
-          requestAnimationFrame(() => requestAnimationFrame(resolve))
-        }, { once: true })
-      }
-    })
-
-    await new Promise(r => setTimeout(r, 400))
+    await new Promise(r => setTimeout(r, 500))
 
     const alturaReal = Math.max(container.scrollHeight, container.offsetHeight)
 
@@ -540,6 +542,9 @@ async function emitirPDF() {
     })
 
     document.body.removeChild(container)
+    document.body.removeChild(overlay)
+    container = null
+    overlay = null
 
     const imgData = canvas.toDataURL('image/png')
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
@@ -565,6 +570,8 @@ async function emitirPDF() {
     console.error('Erro ao gerar PDF:', e)
     alert('Erro ao gerar PDF: ' + e.message)
   } finally {
+    if (container && container.parentNode) document.body.removeChild(container)
+    if (overlay && overlay.parentNode) document.body.removeChild(overlay)
     gerandoPDF.value = false
   }
 }
