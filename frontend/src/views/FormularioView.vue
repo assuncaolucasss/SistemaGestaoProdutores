@@ -313,11 +313,11 @@ function formatarData(data) {
 
 function gerarLinhasInvestimento() {
   if (!form.value.itens_investimento.length) {
-    return `<tr><td colspan="4" style="padding:7px 10px;border:1px solid #ccc;text-align:center;color:#999;">Nenhum item</td></tr>`
+    return `<tr><td colspan="4" style="padding:7px 10px;border:1px solid #ccc;text-align:center;color:#999;">NENHUM ITEM</td></tr>`
   }
   return form.value.itens_investimento.map(item => `
     <tr>
-      <td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${item.discriminacao}</td>
+      <td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${(item.discriminacao || '').toUpperCase()}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">${item.quantidade}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">R$ ${Number(item.valor_unitario).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;font-weight:bold;">R$ ${Number(item.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
@@ -326,11 +326,11 @@ function gerarLinhasInvestimento() {
 
 function gerarLinhasMaoObra() {
   if (!form.value.itens_mao_obra.length) {
-    return `<tr><td colspan="4" style="padding:7px 10px;border:1px solid #ccc;text-align:center;color:#999;">Nenhum item</td></tr>`
+    return `<tr><td colspan="4" style="padding:7px 10px;border:1px solid #ccc;text-align:center;color:#999;">NENHUM ITEM</td></tr>`
   }
   return form.value.itens_mao_obra.map(item => `
     <tr>
-      <td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${item.descricao}</td>
+      <td style="padding:7px 10px;border:1px solid #ccc;text-transform:uppercase;">${(item.descricao || '').toUpperCase()}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">${item.visitas}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;">R$ ${Number(item.valor_unitario).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
       <td style="padding:7px 10px;border:1px solid #ccc;text-align:center;font-weight:bold;">R$ ${Number(item.subtotal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
@@ -341,19 +341,19 @@ function gerarDadosSegundoBeneficiarioPDF() {
   if (!eFomentoJovem.value || !form.value.segundo_beneficiario_nome) return ''
   return `
     <tr>
-      <td style="padding:7px 10px;border:1px solid #ccc;"><strong>BENEFICIÁRIO</strong> ${form.value.segundo_beneficiario_nome}</td>
-      <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${form.value.segundo_beneficiario_cpf}</td>
+      <td style="padding:7px 10px;border:1px solid #ccc;"><strong>BENEFICIÁRIO</strong> ${(form.value.segundo_beneficiario_nome || '').toUpperCase()}</td>
+      <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${form.value.segundo_beneficiario_cpf || ''}</td>
     </tr>`
 }
 
 function gerarEntidadeResponsavelPDF() {
   const textoExtra = form.value.texto_entidade_responsavel
-    ? `<p style="font-size:11px;line-height:1.7;white-space:pre-wrap;margin-top:6px;text-transform:uppercase;">${form.value.texto_entidade_responsavel}</p>`
+    ? `<p style="font-size:11px;line-height:1.7;white-space:pre-wrap;margin-top:6px;text-transform:uppercase;">${(form.value.texto_entidade_responsavel || '').toUpperCase()}</p>`
     : ''
   return `
     <div style="margin-bottom:20px;">
-      <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:6px;text-transform:uppercase;">Entidade responsável pela elaboração/execução/acompanhamento deste projeto</h2>
-      <p style="font-size:13px;font-weight:bold;text-transform:uppercase;margin:0 0 4px 0;">${form.value.entidade_elaboracao}</p>
+      <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:6px;text-transform:uppercase;">ENTIDADE RESPONSÁVEL PELA ELABORAÇÃO/EXECUÇÃO/ACOMPANHAMENTO DESTE PROJETO</h2>
+      <p style="font-size:13px;font-weight:bold;text-transform:uppercase;margin:0 0 4px 0;">${(form.value.entidade_elaboracao || '').toUpperCase()}</p>
       ${textoExtra}
     </div>`
 }
@@ -362,8 +362,8 @@ function gerarJustificativa() {
   if (!form.value.justificativa) return ''
   return `
     <div style="margin-bottom:20px;">
-      <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Justificativa do Projeto Produtivo</h2>
-      <p style="font-size:11px;line-height:1.7;white-space:pre-wrap;padding:10px;border:1px solid #ccc;border-radius:4px;text-transform:uppercase;">${form.value.justificativa}</p>
+      <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">JUSTIFICATIVA DO PROJETO PRODUTIVO</h2>
+      <p style="font-size:11px;line-height:1.7;white-space:pre-wrap;padding:10px;border:1px solid #ccc;border-radius:4px;text-transform:uppercase;">${(form.value.justificativa || '').toUpperCase()}</p>
     </div>`
 }
 
@@ -371,8 +371,8 @@ function gerarAssinaturasNormal() {
   const conjuge = produtor.value?.conjuge_nome
     ? `<div style="text-align:center;width:40%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${produtor.value.conjuge_nome}</strong><br>
-          <span style="color:#555;">CÔNJUGE - CPF: ${produtor.value.cpf_conjuge}</span>
+          <strong>${(produtor.value.conjuge_nome || '').toUpperCase()}</strong><br>
+          <span style="color:#555;">CÔNJUGE - CPF: ${produtor.value.cpf_conjuge || ''}</span>
         </div>
       </div>`
     : ''
@@ -380,8 +380,8 @@ function gerarAssinaturasNormal() {
     <div style="display:flex;justify-content:center;gap:60px;margin-bottom:40px;">
       <div style="text-align:center;width:40%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${produtor.value?.nome_completo}</strong><br>
-          <span style="color:#555;">BENEFICIÁRIO - CPF: ${produtor.value?.cpf_beneficiario}</span>
+          <strong>${(produtor.value?.nome_completo || '').toUpperCase()}</strong><br>
+          <span style="color:#555;">BENEFICIÁRIO - CPF: ${produtor.value?.cpf_beneficiario || ''}</span>
         </div>
       </div>
       ${conjuge}
@@ -394,20 +394,20 @@ function gerarAssinaturasJovem() {
     <div style="display:flex;justify-content:center;gap:40px;margin-bottom:40px;flex-wrap:wrap;">
       <div style="text-align:center;width:28%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${produtor.value?.nome_completo}</strong><br>
-          <span style="color:#555;">BENEFICIÁRIO - CPF: ${produtor.value?.cpf_beneficiario}</span>
+          <strong>${(produtor.value?.nome_completo || '').toUpperCase()}</strong><br>
+          <span style="color:#555;">BENEFICIÁRIO - CPF: ${produtor.value?.cpf_beneficiario || ''}</span>
         </div>
       </div>
       <div style="text-align:center;width:28%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${produtor.value?.conjuge_nome || ''}</strong><br>
+          <strong>${(produtor.value?.conjuge_nome || '').toUpperCase()}</strong><br>
           <span style="color:#555;">CÔNJUGE - CPF: ${produtor.value?.cpf_conjuge || ''}</span>
         </div>
       </div>
       <div style="text-align:center;width:28%;">
         <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
-          <strong>${form.value.segundo_beneficiario_nome}</strong><br>
-          <span style="color:#555;">BENEFICIÁRIO - CPF: ${form.value.segundo_beneficiario_cpf}</span>
+          <strong>${(form.value.segundo_beneficiario_nome || '').toUpperCase()}</strong><br>
+          <span style="color:#555;">BENEFICIÁRIO - CPF: ${form.value.segundo_beneficiario_cpf || ''}</span>
         </div>
       </div>
     </div>`
@@ -420,31 +420,37 @@ async function emitirPDF() {
   let wrapper = null
 
   try {
-    const nomeModalidade = form.value.modalidade || hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome || ''
+    const nomeModalidade = (form.value.modalidade || hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome || '').toUpperCase()
     const nomeBeneficiario = (produtor.value?.nome_completo || '').toUpperCase()
+    const codigoBeneficiario = (produtor.value?.codigo_beneficiario || '').toUpperCase()
+    const nomeFomento = (fomento.value?.nome || '').toUpperCase()
+    const conjugeNome = (produtor.value?.conjuge_nome || '').toUpperCase()
+    const assentamento = (produtor.value?.assentamento || '').toUpperCase()
+    const lote = (produtor.value?.lote || '').toUpperCase()
+    const municipioData = (form.value.municipio_data || '').toUpperCase()
     const assinaturas = eFomentoJovem.value ? gerarAssinaturasJovem() : gerarAssinaturasNormal()
 
     const html = `
       <div style="font-family:Arial,sans-serif;padding:40px;background:#fff;color:#000;width:794px;box-sizing:border-box;">
         <div style="text-align:center;border-bottom:2px solid #1a6b3c;padding-bottom:16px;margin-bottom:24px;">
-          <p style="color:#999;margin:0 0 4px 0;font-size:11px;text-transform:uppercase;letter-spacing:1px;">${produtor.value?.codigo_beneficiario}</p>
-          <h1 style="color:#1a6b3c;margin:0;font-size:18px;text-transform:uppercase;">${fomento.value?.nome}</h1>
+          <p style="color:#999;margin:0 0 4px 0;font-size:11px;text-transform:uppercase;letter-spacing:1px;">${codigoBeneficiario}</p>
+          <h1 style="color:#1a6b3c;margin:0;font-size:18px;text-transform:uppercase;">${nomeFomento}</h1>
           <p style="color:#666;margin:4px 0 0 0;font-size:11px;">MODALIDADE: ${nomeModalidade}</p>
         </div>
 
-        <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Dados do Beneficiário</h2>
+        <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">DADOS DO BENEFICIÁRIO</h2>
         <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;">
           <tr>
             <td style="padding:7px 10px;border:1px solid #ccc;width:50%;"><strong>BENEFICIÁRIO</strong> ${nomeBeneficiario}</td>
-            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_beneficiario}</td>
+            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_beneficiario || ''}</td>
           </tr>
           <tr>
-            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CÔNJUGE</strong> ${produtor.value?.conjuge_nome || ''}</td>
+            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CÔNJUGE</strong> ${conjugeNome}</td>
             <td style="padding:7px 10px;border:1px solid #ccc;"><strong>CPF</strong> ${produtor.value?.cpf_conjuge || ''}</td>
           </tr>
           <tr>
-            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>ASSENTAMENTO</strong> ${produtor.value?.assentamento || ''}</td>
-            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>LOTE</strong> ${produtor.value?.lote || ''}</td>
+            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>ASSENTAMENTO</strong> ${assentamento}</td>
+            <td style="padding:7px 10px;border:1px solid #ccc;"><strong>LOTE</strong> ${lote}</td>
           </tr>
           ${gerarDadosSegundoBeneficiarioPDF()}
         </table>
@@ -453,7 +459,7 @@ async function emitirPDF() {
 
         ${gerarJustificativa()}
 
-        <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Memória de Cálculo - Investimentos</h2>
+        <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">MEMÓRIA DE CÁLCULO - INVESTIMENTOS</h2>
         <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;">
           <thead>
             <tr style="background:#f0f0f0;">
@@ -466,7 +472,7 @@ async function emitirPDF() {
           <tbody>${gerarLinhasInvestimento()}</tbody>
         </table>
 
-        <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Mão de Obra Especializada</h2>
+        <h2 style="color:#1a6b3c;font-size:13px;margin-bottom:8px;text-transform:uppercase;">MÃO DE OBRA ESPECIALIZADA</h2>
         <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;">
           <thead>
             <tr style="background:#f0f0f0;">
@@ -484,7 +490,7 @@ async function emitirPDF() {
         </div>
 
         <p style="font-size:13px;text-align:left;margin-bottom:60px;text-transform:uppercase;">
-          ${form.value.municipio_data}, ${formatarData(form.value.data_assinatura)}
+          ${municipioData}, ${formatarData(form.value.data_assinatura)}
         </p>
 
         ${assinaturas}
@@ -493,15 +499,12 @@ async function emitirPDF() {
           <div style="text-align:center;width:55%;">
             <div style="border-top:1px solid #333;padding-top:8px;font-size:11px;">
               <strong>RESPONSÁVEL TÉCNICO</strong><br>
-              <span style="color:#555;text-transform:uppercase;">${form.value.entidade_elaboracao}</span>
+              <span style="color:#555;text-transform:uppercase;">${(form.value.entidade_elaboracao || '').toUpperCase()}</span>
             </div>
           </div>
         </div>
       </div>`
 
-    // Wrapper mantido no fluxo normal do documento (sem position:fixed/absolute),
-    // mas com altura 0 e overflow hidden — assim não empurra o layout nem aparece na tela,
-    // e o html2canvas consegue medir e capturar corretamente.
     wrapper = document.createElement('div')
     wrapper.style.height = '0'
     wrapper.style.overflow = 'hidden'
@@ -536,12 +539,11 @@ async function emitirPDF() {
     document.body.removeChild(wrapper)
     wrapper = null
 
-    const imgData = canvas.toDataURL('image/png')
-
     if (!canvas.width || !canvas.height) {
       throw new Error('Falha ao capturar o conteúdo do formulário (canvas vazio).')
     }
 
+    const imgData = canvas.toDataURL('image/png')
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
     const pageWidth = pdf.internal.pageSize.getWidth()
     const pageHeight = pdf.internal.pageSize.getHeight()
