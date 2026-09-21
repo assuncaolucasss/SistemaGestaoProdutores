@@ -497,10 +497,15 @@ async function emitirPDF() {
       </div>`
 
     const container = document.createElement('div')
-    container.style.cssText = 'position:fixed;top:0;left:-9999px;width:794px;background:#fff;z-index:-1;'
+    container.style.cssText = 'position:absolute;top:0;left:0;width:794px;background:#fff;z-index:-1;visibility:hidden;'
     container.innerHTML = html
     document.body.appendChild(container)
-    await new Promise(r => setTimeout(r, 300))
+
+    void container.offsetHeight
+    await new Promise(r => setTimeout(r, 500))
+
+    const alturaReal = container.scrollHeight
+    container.style.height = `${alturaReal}px`
 
     const canvas = await html2canvas(container, {
       scale: 2,
@@ -508,8 +513,10 @@ async function emitirPDF() {
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
-      width: container.scrollWidth,
-      height: container.scrollHeight,
+      width: 794,
+      height: alturaReal,
+      windowWidth: 794,
+      windowHeight: alturaReal,
     })
     document.body.removeChild(container)
 
