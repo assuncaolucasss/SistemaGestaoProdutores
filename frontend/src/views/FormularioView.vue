@@ -417,8 +417,7 @@ async function emitirPDF() {
   if (gerandoPDF.value) return
   gerandoPDF.value = true
 
-  let container = null
-  let overlay = null
+  let wrapper = null
 
   try {
     const nomeModalidade = form.value.modalidade || hierarquia.value.find(h => h.classe.id === form.value.classe_id)?.classe.nome || ''
@@ -500,53 +499,49 @@ async function emitirPDF() {
         </div>
       </div>`
 
-    overlay = document.createElement('div')
-    overlay.style.position = 'fixed'
-    overlay.style.top = '0'
-    overlay.style.left = '0'
-    overlay.style.width = '100vw'
-    overlay.style.height = '100vh'
-    overlay.style.backgroundColor = '#ffffff'
-    overlay.style.zIndex = '99998'
-    document.body.appendChild(overlay)
+    // Wrapper mantido no fluxo normal do documento (sem position:fixed/absolute),
+    // mas com altura 0 e overflow hidden — assim não empurra o layout nem aparece na tela,
+    // e o html2canvas consegue medir e capturar corretamente.
+    wrapper = document.createElement('div')
+    wrapper.style.height = '0'
+    wrapper.style.overflow = 'hidden'
+    wrapper.style.margin = '0'
+    wrapper.style.padding = '0'
 
-    container = document.createElement('div')
-    container.style.position = 'fixed'
-    container.style.top = '0'
-    container.style.left = '0'
-    container.style.width = '794px'
-    container.style.backgroundColor = '#ffffff'
-    container.style.zIndex = '99999'
-    container.style.margin = '0'
-    container.innerHTML = html
-    document.body.appendChild(container)
+    const conteudo = document.createElement('div')
+    conteudo.style.width = '794px'
+    conteudo.style.backgroundColor = '#ffffff'
+    conteudo.innerHTML = html
 
-    await new Promise(r => setTimeout(r, 500))
+    wrapper.appendChild(conteudo)
+    document.body.appendChild(wrapper)
 
-    const alturaReal = Math.max(container.scrollHeight, container.offsetHeight)
+    await new Promise(r => setTimeout(r, 100))
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
 
-    const canvas = await html2canvas(container, {
+    const alturaReal = Math.max(conteudo.scrollHeight, conteudo.offsetHeight)
+
+    const canvas = await html2canvas(conteudo, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
-      x: 0,
-      y: 0,
-      scrollX: 0,
-      scrollY: 0,
       width: 794,
       height: alturaReal,
       windowWidth: 794,
       windowHeight: alturaReal,
     })
 
-    document.body.removeChild(container)
-    document.body.removeChild(overlay)
-    container = null
-    overlay = null
+    document.body.removeChild(wrapper)
+    wrapper = null
 
     const imgData = canvas.toDataURL('image/png')
+
+    if (!canvas.width || !canvas.height) {
+      throw new Error('Falha ao capturar o conteúdo do formulário (canvas vazio).')
+    }
+
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
     const pageWidth = pdf.internal.pageSize.getWidth()
     const pageHeight = pdf.internal.pageSize.getHeight()
@@ -570,8 +565,7 @@ async function emitirPDF() {
     console.error('Erro ao gerar PDF:', e)
     alert('Erro ao gerar PDF: ' + e.message)
   } finally {
-    if (container && container.parentNode) document.body.removeChild(container)
-    if (overlay && overlay.parentNode) document.body.removeChild(overlay)
+    if (wrapper && wrapper.parentNode) document.body.removeChild(wrapper)
     gerandoPDF.value = false
   }
 }
